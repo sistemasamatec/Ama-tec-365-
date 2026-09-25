@@ -1,0 +1,17 @@
+{
+  "name": "Ama Tec — Assistência Técnica de Equipamentos Eletrónicos",
+  "short_name": "Ama Tec",
+  "description": "Centro oficial de diagnóstico e assistência técnica de equipamentos eletrónicos em Luanda, Angola.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0F172A",
+  "theme_color": "#0284C7",
+  "icons": [
+    {
+      "src": "/brand/logo-symbol.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

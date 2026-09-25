@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <defs>
+    <linearGradient id="symGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0284C7" />
+      <stop offset="100%" stop-color="#0369A1" />
+    </linearGradient>
+  </defs>
+  <!-- Hexagonal Tech Shield -->
+  <path d="M 50 5 L 88 27 L 88 73 L 50 95 L 12 73 L 12 27 Z" 
+        fill="#0F172A" stroke="url(#symGrad)" stroke-width="4" stroke-linejoin="round" />
+  
+  <!-- Electronic Circuit Traces -->
+  <path d="M 28 35 L 42 35 L 50 48 L 72 48" stroke="#38BDF8" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="28" cy="35" r="4" fill="#38BDF8" />
+  <circle cx="72" cy="48" r="4" fill="#38BDF8" />
+
+  <path d="M 72 65 L 58 65 L 50 52 L 28 52" stroke="#0284C7" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="72" cy="65" r="4" fill="#0284C7" />
+  <circle cx="28" cy="52" r="4" fill="#0284C7" />
+
+  <!-- Center Microchip -->
+  <rect x="42" y="42" width="16" height="16" rx="3" fill="#0284C7" />
+  <path d="M 46 50 L 54 50 M 50 46 L 50 54" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round"/>
+</svg>

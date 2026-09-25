@@ -1,0 +1,735 @@
+[
+  {
+    "id": "audit-1790333664927-qdl6",
+    "timestamp": "2026-09-25T10:54:24.927Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "BACKUP_CREATED",
+    "target": "amatec-backup-2026-09-25T10-54-24-924Z.json",
+    "ip": "127.0.0.1",
+    "details": {
+      "sizeBytes": 82660
+    }
+  },
+  {
+    "id": "audit-1790333664923-03wq",
+    "timestamp": "2026-09-25T10:54:24.923Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "TESTIMONIAL_SAVED",
+    "target": "Dr. Francisco Manuel",
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": "audit-1790333664921-krz8",
+    "timestamp": "2026-09-25T10:54:24.921Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGO_REVERTED",
+    "target": "/brand/logo.svg",
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": "audit-1790333664919-8t6s",
+    "timestamp": "2026-09-25T10:54:24.919Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGO_UPLOADED",
+    "target": "/brand/uploads/logo-1790333664919.svg",
+    "ip": "127.0.0.1",
+    "details": {
+      "fileName": "novo-logo.svg",
+      "size": 76
+    }
+  },
+  {
+    "id": "audit-1790333664917-hz67",
+    "timestamp": "2026-09-25T10:54:24.917Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SETTINGS_UPDATED",
+    "target": "settings",
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": "audit-1790333664914-e4tq",
+    "timestamp": "2026-09-25T10:54:24.914Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_ARCHIVED",
+    "target": "Serviço Integração API 1790333664905",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790333664906"
+    }
+  },
+  {
+    "id": "audit-1790333664912-pdvu",
+    "timestamp": "2026-09-25T10:54:24.912Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_UPDATED",
+    "target": "Serviço Integração API 1790333664905",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "servico-integracao-api-1790333664905"
+    }
+  },
+  {
+    "id": "audit-1790333664909-urfg",
+    "timestamp": "2026-09-25T10:54:24.909Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_CREATED",
+    "target": "Serviço Integração API 1790333664905",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "servico-integracao-api-1790333664905"
+    }
+  },
+  {
+    "id": "audit-1790333664904-3a3a",
+    "timestamp": "2026-09-25T10:54:24.904Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "127.0.0.1",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790333664822-jrqq",
+    "timestamp": "2026-09-25T10:54:24.822Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "127.0.0.1",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790333655238-zi7i",
+    "timestamp": "2026-09-25T10:54:15.238Z",
+    "userEmail": "test-suite@amatec.ao",
+    "action": "BACKUP_CREATED",
+    "target": "amatec-backup-2026-09-25T10-54-15-230Z.json",
+    "ip": "127.0.0.1",
+    "details": {
+      "sizeBytes": 77122
+    }
+  },
+  {
+    "id": "audit-1790333655229-3vrn",
+    "timestamp": "2026-09-25T10:54:15.229Z",
+    "userEmail": "admin",
+    "action": "LOGO_UPLOADED",
+    "target": "/brand/uploads/logo-1790333655228.svg",
+    "ip": "127.0.0.1",
+    "details": {
+      "fileName": "logo-teste.svg",
+      "size": 103
+    }
+  },
+  {
+    "id": "audit-1790333655227-xnqh",
+    "timestamp": "2026-09-25T10:54:15.227Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_DELETED",
+    "target": "srv-1790333655210",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790333655210"
+    }
+  },
+  {
+    "id": "audit-1790333655224-fl6l",
+    "timestamp": "2026-09-25T10:54:15.224Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_ARCHIVED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790333655210"
+    }
+  },
+  {
+    "id": "audit-1790333655212-i1qo",
+    "timestamp": "2026-09-25T10:54:15.212Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_UPDATED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "teste-crud-1790333655209"
+    }
+  },
+  {
+    "id": "audit-1790333655210-ra29",
+    "timestamp": "2026-09-25T10:54:15.210Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_CREATED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "teste-crud-1790333655209"
+    }
+  },
+  {
+    "id": "audit-1790333655208-u4wn",
+    "timestamp": "2026-09-25T10:54:15.208Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790333655127-mtmp",
+    "timestamp": "2026-09-25T10:54:15.127Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790333655047-bdgf",
+    "timestamp": "2026-09-25T10:54:15.047Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790333654965-ukyw",
+    "timestamp": "2026-09-25T10:54:14.965Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790333654886-5isa",
+    "timestamp": "2026-09-25T10:54:14.886Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790333654802-9y37",
+    "timestamp": "2026-09-25T10:54:14.802Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "192.168.1.100",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790333637511-wjjo",
+    "timestamp": "2026-09-25T10:53:57.511Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_ARCHIVED",
+    "target": "E2E Serviço Especial 1790333636003",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790333636692"
+    }
+  },
+  {
+    "id": "audit-1790333637252-51wo",
+    "timestamp": "2026-09-25T10:53:57.252Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_UPDATED",
+    "target": "E2E Serviço Especial 1790333636003",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "e2e-servico-especial-1790333636003"
+    }
+  },
+  {
+    "id": "audit-1790333636692-81r8",
+    "timestamp": "2026-09-25T10:53:56.692Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_CREATED",
+    "target": "E2E Serviço Especial 1790333636003",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "e2e-servico-especial-1790333636003"
+    }
+  },
+  {
+    "id": "audit-1790333635870-1e3x",
+    "timestamp": "2026-09-25T10:53:55.870Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "127.0.0.1",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790333559697-4io3",
+    "timestamp": "2026-09-25T10:52:39.697Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_ARCHIVED",
+    "target": "E2E Serviço Especial 1790333558212",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790333558877"
+    }
+  },
+  {
+    "id": "audit-1790333559430-344z",
+    "timestamp": "2026-09-25T10:52:39.430Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_UPDATED",
+    "target": "E2E Serviço Especial 1790333558212",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "e2e-servico-especial-1790333558212"
+    }
+  },
+  {
+    "id": "audit-1790333558877-u0zq",
+    "timestamp": "2026-09-25T10:52:38.877Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_CREATED",
+    "target": "E2E Serviço Especial 1790333558212",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "e2e-servico-especial-1790333558212"
+    }
+  },
+  {
+    "id": "audit-1790333558029-4smv",
+    "timestamp": "2026-09-25T10:52:38.029Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "127.0.0.1",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790333501750-5iip",
+    "timestamp": "2026-09-25T10:51:41.750Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_ARCHIVED",
+    "target": "E2E Serviço Especial 1790333500215",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790333500967"
+    }
+  },
+  {
+    "id": "audit-1790333501524-brpe",
+    "timestamp": "2026-09-25T10:51:41.524Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_UPDATED",
+    "target": "E2E Serviço Especial 1790333500215",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "e2e-servico-especial-1790333500215"
+    }
+  },
+  {
+    "id": "audit-1790333500967-tnse",
+    "timestamp": "2026-09-25T10:51:40.968Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_CREATED",
+    "target": "E2E Serviço Especial 1790333500215",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "e2e-servico-especial-1790333500215"
+    }
+  },
+  {
+    "id": "audit-1790333500049-fvye",
+    "timestamp": "2026-09-25T10:51:40.049Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "127.0.0.1",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790333431032-antv",
+    "timestamp": "2026-09-25T10:50:31.032Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_CREATED",
+    "target": "E2E Serviço Especial 1790333430417",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "e2e-servico-especial-1790333430417"
+    }
+  },
+  {
+    "id": "audit-1790333430246-1gke",
+    "timestamp": "2026-09-25T10:50:30.246Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "127.0.0.1",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790333322398-4nh0",
+    "timestamp": "2026-09-25T10:48:42.398Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "127.0.0.1",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790333127953-es9k",
+    "timestamp": "2026-09-25T10:45:27.953Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "BACKUP_CREATED",
+    "target": "amatec-backup-2026-09-25T10-45-27-951Z.json",
+    "ip": "127.0.0.1",
+    "details": {
+      "sizeBytes": 60819
+    }
+  },
+  {
+    "id": "audit-1790333127950-db5y",
+    "timestamp": "2026-09-25T10:45:27.950Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "TESTIMONIAL_SAVED",
+    "target": "Dr. Francisco Manuel",
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": "audit-1790333127948-20py",
+    "timestamp": "2026-09-25T10:45:27.948Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGO_REVERTED",
+    "target": "/brand/logo.svg",
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": "audit-1790333127947-zjn7",
+    "timestamp": "2026-09-25T10:45:27.947Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGO_UPLOADED",
+    "target": "/brand/uploads/logo-1790333127947.svg",
+    "ip": "127.0.0.1",
+    "details": {
+      "fileName": "novo-logo.svg",
+      "size": 76
+    }
+  },
+  {
+    "id": "audit-1790333127945-xj4q",
+    "timestamp": "2026-09-25T10:45:27.945Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SETTINGS_UPDATED",
+    "target": "settings",
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": "audit-1790333127943-zm49",
+    "timestamp": "2026-09-25T10:45:27.943Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_ARCHIVED",
+    "target": "Serviço Integração API 1790333127938",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790333127939"
+    }
+  },
+  {
+    "id": "audit-1790333127941-m5fn",
+    "timestamp": "2026-09-25T10:45:27.941Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_UPDATED",
+    "target": "Serviço Integração API 1790333127938",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "servico-integracao-api-1790333127938"
+    }
+  },
+  {
+    "id": "audit-1790333127939-jhuw",
+    "timestamp": "2026-09-25T10:45:27.939Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "SERVICE_CREATED",
+    "target": "Serviço Integração API 1790333127938",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "servico-integracao-api-1790333127938"
+    }
+  },
+  {
+    "id": "audit-1790333127937-jjwo",
+    "timestamp": "2026-09-25T10:45:27.937Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "127.0.0.1",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790333127856-q8fr",
+    "timestamp": "2026-09-25T10:45:27.856Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "127.0.0.1",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790333089863-1ys9",
+    "timestamp": "2026-09-25T10:44:49.863Z",
+    "userEmail": "test-suite@amatec.ao",
+    "action": "BACKUP_CREATED",
+    "target": "amatec-backup-2026-09-25T10-44-49-861Z.json",
+    "ip": "127.0.0.1",
+    "details": {
+      "sizeBytes": 55417
+    }
+  },
+  {
+    "id": "audit-1790333089860-lqv7",
+    "timestamp": "2026-09-25T10:44:49.860Z",
+    "userEmail": "admin",
+    "action": "LOGO_UPLOADED",
+    "target": "/brand/uploads/logo-1790333089860.svg",
+    "ip": "127.0.0.1",
+    "details": {
+      "fileName": "logo-teste.svg",
+      "size": 103
+    }
+  },
+  {
+    "id": "audit-1790333089859-z253",
+    "timestamp": "2026-09-25T10:44:49.859Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_DELETED",
+    "target": "srv-1790333089853",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790333089853"
+    }
+  },
+  {
+    "id": "audit-1790333089857-7y7l",
+    "timestamp": "2026-09-25T10:44:49.857Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_ARCHIVED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790333089853"
+    }
+  },
+  {
+    "id": "audit-1790333089855-tnpe",
+    "timestamp": "2026-09-25T10:44:49.855Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_UPDATED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "teste-crud-1790333089853"
+    }
+  },
+  {
+    "id": "audit-1790333089854-6btm",
+    "timestamp": "2026-09-25T10:44:49.854Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_CREATED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "teste-crud-1790333089853"
+    }
+  },
+  {
+    "id": "audit-1790333089850-6ijk",
+    "timestamp": "2026-09-25T10:44:49.850Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "192.168.1.100",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790332984965-wtyx",
+    "timestamp": "2026-09-25T10:43:04.965Z",
+    "userEmail": "test-suite@amatec.ao",
+    "action": "BACKUP_CREATED",
+    "target": "amatec-backup-2026-09-25T10-43-04-955Z.json",
+    "ip": "127.0.0.1",
+    "details": {
+      "sizeBytes": 52859
+    }
+  },
+  {
+    "id": "audit-1790332984955-uy19",
+    "timestamp": "2026-09-25T10:43:04.955Z",
+    "userEmail": "admin",
+    "action": "LOGO_UPLOADED",
+    "target": "/brand/uploads/logo-1790332984954.svg",
+    "ip": "127.0.0.1",
+    "details": {
+      "fileName": "logo-teste.svg",
+      "size": 103
+    }
+  },
+  {
+    "id": "audit-1790332984953-3f7f",
+    "timestamp": "2026-09-25T10:43:04.953Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_DELETED",
+    "target": "srv-1790332984949",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790332984949"
+    }
+  },
+  {
+    "id": "audit-1790332984952-163i",
+    "timestamp": "2026-09-25T10:43:04.952Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_ARCHIVED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790332984949"
+    }
+  },
+  {
+    "id": "audit-1790332984951-lkdr",
+    "timestamp": "2026-09-25T10:43:04.951Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_UPDATED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "teste-crud-1790332984948"
+    }
+  },
+  {
+    "id": "audit-1790332984949-lhgx",
+    "timestamp": "2026-09-25T10:43:04.949Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_CREATED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "teste-crud-1790332984948"
+    }
+  },
+  {
+    "id": "audit-1790332984949-x5mg",
+    "timestamp": "2026-09-25T10:43:04.949Z",
+    "userEmail": "sistema",
+    "action": "SERVICES_SEEDED",
+    "target": "10 serviços",
+    "ip": "127.0.0.1"
+  },
+  {
+    "id": "audit-1790332984948-jw8k",
+    "timestamp": "2026-09-25T10:43:04.948Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790332984865-qpmd",
+    "timestamp": "2026-09-25T10:43:04.865Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790332984785-4o3y",
+    "timestamp": "2026-09-25T10:43:04.785Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790332984693-e9qt",
+    "timestamp": "2026-09-25T10:43:04.693Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790332984610-jlvz",
+    "timestamp": "2026-09-25T10:43:04.610Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790332984522-4dw3",
+    "timestamp": "2026-09-25T10:43:04.522Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "192.168.1.100",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
+    "id": "audit-1790332984254-bsyz",
+    "timestamp": "2026-09-25T10:43:04.254Z",
+    "userEmail": "sistema",
+    "action": "USER_INIT",
+    "target": "adminUser",
+    "ip": "127.0.0.1",
+    "details": {
+      "email": "josuefranciscojaime@gmail.com",
+      "role": "admin"
+    }
+  }
+]

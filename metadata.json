@@ -1,0 +1,6 @@
+{
+  "name": "Ama Tec — Assistência Técnica",
+  "description": "Site oficial da Ama Tec. Assistência técnica especializada de equipamentos eletrónicos, eletrodomésticos e industriais em Luanda, Angola.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

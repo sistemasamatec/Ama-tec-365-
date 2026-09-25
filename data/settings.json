@@ -1,0 +1,86 @@
+{
+  "company": {
+    "brand": "Ama Tec",
+    "legalName": "AMA TEC PRESTAÇÃO DE SERVIÇOS & COMÉRCIO GERAL (SU)",
+    "descriptor": "Assistência Técnica de Equipamentos Eletrónicos",
+    "nif": "5001399837",
+    "address": "Golf 2, Rua dos Príncipes",
+    "city": "Luanda",
+    "country": "Angola",
+    "phone": "+244930372597",
+    "phoneDisplay": "+244 930 372 597",
+    "whatsapp": "+244930372597",
+    "whatsappDisplay": "+244 930 372 597",
+    "email": "geral@amatec.ao",
+    "domain": "amatec.ao",
+    "siteUrl": "https://amatec.ao"
+  },
+  "visualIdentity": {
+    "logoUrl": "/brand/logo.svg",
+    "logoHistory": [
+      {
+        "url": "/brand/uploads/logo-1790333664919.svg",
+        "uploadedAt": "2026-09-25T10:54:24.920Z",
+        "fileName": "logo-1790333664919.svg"
+      },
+      {
+        "url": "/brand/uploads/logo-1790333655228.svg",
+        "uploadedAt": "2026-09-25T10:54:24.919Z",
+        "fileName": "logo-1790333655228.svg"
+      },
+      {
+        "url": "/brand/logo.svg",
+        "uploadedAt": "2026-09-25T10:54:15.229Z",
+        "fileName": "logo.svg"
+      },
+      {
+        "url": "/brand/uploads/logo-1790333127947.svg",
+        "uploadedAt": "2026-09-25T10:45:27.948Z",
+        "fileName": "logo-1790333127947.svg"
+      },
+      {
+        "url": "/brand/uploads/logo-1790333089860.svg",
+        "uploadedAt": "2026-09-25T10:45:27.947Z",
+        "fileName": "logo-1790333089860.svg"
+      },
+      {
+        "url": "/brand/uploads/logo-1790332984954.svg",
+        "uploadedAt": "2026-09-25T10:44:49.860Z",
+        "fileName": "logo-1790332984954.svg"
+      },
+      {
+        "url": "/brand/logo.svg",
+        "uploadedAt": "2026-09-25T10:43:04.955Z",
+        "fileName": "logo.svg"
+      }
+    ],
+    "brandColor": "#0284c7"
+  },
+  "socialLinks": {
+    "facebook": "https://facebook.com/amatec.ao",
+    "instagram": "https://instagram.com/amatec.ao",
+    "whatsappBusiness": "+244930372597",
+    "tiktok": "",
+    "linkedin": "",
+    "youtube": ""
+  },
+  "googleMaps": {
+    "embedUrl": "https://www.google.com/maps/embed?pb=teste",
+    "mapLink": "https://maps.google.com/?q=-8.8893,13.2384",
+    "coordinates": {
+      "lat": -8.8893,
+      "lng": 13.2384
+    }
+  },
+  "businessHours": {
+    "weekdays": "Segunda a Sexta: 08:00 – 18:00",
+    "saturday": "Sábado: 08:00 – 13:00",
+    "sunday": "Domingo: Encerrado (Apoio a Urgências via WhatsApp)",
+    "notes": "Bancada técnica disponível para triagens no Golf 2 durante horário normal."
+  },
+  "googleReviewsUrl": "",
+  "maintenanceMode": {
+    "enabled": false,
+    "message": "O portal da Ama Tec encontra-se em atualização de infraestrutura. Para reparações imediatas, contacte o WhatsApp +244 930 372 597."
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$schema": "https://unpkg.com/knip@5/overview/config-schema.json",
+  "entry": [
+    "src/main.tsx",
+    "src/prerender-entry.tsx",
+    "scripts/prerender.ts",
+    "api/lead.ts",
+    "tests/**/*.ts"
+  ],
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "api/**/*.ts",
+    "scripts/**/*.ts",
+    "tests/**/*.ts"
+  ],
+  "ignoreDependencies": [
+    "@google/genai",
+    "dotenv",
+    "express",
+    "@types/express",
+    "@biomejs/biome",
+    "@tailwindcss/vite",
+    "tailwindcss",
+    "autoprefixer"
+  ]
+}
