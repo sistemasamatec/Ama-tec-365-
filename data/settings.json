@@ -16,8 +16,13 @@
     "siteUrl": "https://amatec.ao"
   },
   "visualIdentity": {
-    "logoUrl": "/brand/logo.svg",
+    "logoUrl": "/brand/uploads/logo-1790358611091.svg",
     "logoHistory": [
+      {
+        "url": "/brand/logo.svg",
+        "uploadedAt": "2026-09-25T17:50:11.092Z",
+        "fileName": "logo.svg"
+      },
       {
         "url": "/brand/uploads/logo-1790333664919.svg",
         "uploadedAt": "2026-09-25T10:54:24.920Z",
