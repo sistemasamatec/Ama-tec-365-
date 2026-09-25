@@ -1,5 +1,138 @@
 [
   {
+    "id": "audit-1790358611094-ahun",
+    "timestamp": "2026-09-25T17:50:11.094Z",
+    "userEmail": "test-suite@amatec.ao",
+    "action": "BACKUP_CREATED",
+    "target": "amatec-backup-2026-09-25T17-50-11-092Z.json",
+    "ip": "127.0.0.1",
+    "details": {
+      "sizeBytes": 86954
+    }
+  },
+  {
+    "id": "audit-1790358611092-d8aa",
+    "timestamp": "2026-09-25T17:50:11.092Z",
+    "userEmail": "admin",
+    "action": "LOGO_UPLOADED",
+    "target": "/brand/uploads/logo-1790358611091.svg",
+    "ip": "127.0.0.1",
+    "details": {
+      "fileName": "logo-teste.svg",
+      "size": 103
+    }
+  },
+  {
+    "id": "audit-1790358611090-7o9c",
+    "timestamp": "2026-09-25T17:50:11.090Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_DELETED",
+    "target": "srv-1790358611085",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790358611085"
+    }
+  },
+  {
+    "id": "audit-1790358611089-k3ej",
+    "timestamp": "2026-09-25T17:50:11.089Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_ARCHIVED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "id": "srv-1790358611085"
+    }
+  },
+  {
+    "id": "audit-1790358611087-20nq",
+    "timestamp": "2026-09-25T17:50:11.087Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_UPDATED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "teste-crud-1790358611084"
+    }
+  },
+  {
+    "id": "audit-1790358611085-pujh",
+    "timestamp": "2026-09-25T17:50:11.085Z",
+    "userEmail": "admin-test@amatec.ao",
+    "action": "SERVICE_CREATED",
+    "target": "Serviço Teste Automatizado",
+    "ip": "127.0.0.1",
+    "details": {
+      "slug": "teste-crud-1790358611084"
+    }
+  },
+  {
+    "id": "audit-1790358611083-1x1g",
+    "timestamp": "2026-09-25T17:50:11.083Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790358611010-cxoc",
+    "timestamp": "2026-09-25T17:50:11.010Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790358610931-uq7r",
+    "timestamp": "2026-09-25T17:50:10.931Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790358610863-x2xq",
+    "timestamp": "2026-09-25T17:50:10.863Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790358610787-oi8t",
+    "timestamp": "2026-09-25T17:50:10.787Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_FAILED",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "10.99.99.99",
+    "details": {
+      "reason": "Palavra-passe errada"
+    }
+  },
+  {
+    "id": "audit-1790358610718-o6ks",
+    "timestamp": "2026-09-25T17:50:10.718Z",
+    "userEmail": "josuefranciscojaime@gmail.com",
+    "action": "LOGIN_SUCCESS",
+    "target": "josuefranciscojaime@gmail.com",
+    "ip": "192.168.1.100",
+    "details": {
+      "role": "admin"
+    }
+  },
+  {
     "id": "audit-1790333664927-qdl6",
     "timestamp": "2026-09-25T10:54:24.927Z",
     "userEmail": "josuefranciscojaime@gmail.com",

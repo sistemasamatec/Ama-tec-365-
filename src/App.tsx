@@ -1,5 +1,6 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, useLocation } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { WhatsAppFloating } from './components/layout/WhatsAppFloating';
@@ -200,6 +201,7 @@ export default function App() {
         <BrowserRouter>
           <ScrollToTop />
           <MainAppContent />
+          <Analytics />
         </BrowserRouter>
       </ServicesProvider>
     </SettingsProvider>
