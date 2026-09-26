@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { MapPin, Phone, Mail, MessageSquare, Clock, Database, Lock, HelpCircle } from 'lucide-react';
+import { CATEGORIES_CONFIG } from '../../content/services';
 import { getGeneralWhatsAppUrl } from '../../lib/whatsapp';
 import { track } from '../../lib/analytics';
 import { useSettings } from '../../context/SettingsContext';
@@ -103,59 +104,55 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
             )}
           </div>
 
-          {/* Column 2: Serviços Especializados */}
+          {/* Column 2: Categorias de Serviços */}
           <div className="space-y-3">
             <h4 className="text-white text-sm font-semibold tracking-wider uppercase">
-              Serviços
+              Categorias de Serviços
             </h4>
             <ul className="space-y-2 text-sm">
+              {CATEGORIES_CONFIG.map((cat) => (
+                <li key={cat.id}>
+                  <Link
+                    to={`/servicos?categoria=${cat.id}`}
+                    className="hover:text-white transition-colors flex items-center gap-1.5"
+                  >
+                    <span className="text-xs" aria-hidden="true">
+                      {cat.icon}
+                    </span>
+                    <span>{cat.name}</span>
+                  </Link>
+                </li>
+              ))}
               <li>
-                <Link to="/servicos/reparacao-de-televisores" className="hover:text-white transition-colors">
-                  Televisores & Ecrãs
-                </Link>
-              </li>
-              <li>
-                <Link to="/servicos/reparacao-de-maquinas-de-lavar" className="hover:text-white transition-colors">
-                  Máquinas de Lavar
-                </Link>
-              </li>
-              <li>
-                <Link to="/servicos/reparacao-de-air-fryer" className="hover:text-white transition-colors">
-                  Air Fryer & Fornos
-                </Link>
-              </li>
-              <li>
-                <Link to="/servicos/reparacao-de-micro-ondas" className="hover:text-white transition-colors">
-                  Micro-ondas
-                </Link>
-              </li>
-              <li>
-                <Link to="/servicos/reparacao-de-placas-eletronicas" className="hover:text-white transition-colors">
-                  Placas Eletrónicas
-                </Link>
-              </li>
-              <li>
-                <Link to="/servicos/cozinhas-industriais" className="hover:text-white transition-colors">
-                  Cozinhas Industriais
-                </Link>
-              </li>
-              <li>
-                <Link to="/servicos" className="text-sky-400 hover:text-sky-300 font-medium inline-block pt-1">
-                  Ver todas as 6 categorias &rarr;
+                <Link
+                  to="/servicos"
+                  className="text-sky-400 hover:text-sky-300 font-medium inline-block pt-1"
+                >
+                  Ver todos os serviços &rarr;
                 </Link>
               </li>
             </ul>
           </div>
 
-          {/* Column 3: Links Institucionais */}
+          {/* Column 3: Links Institucionais Principais */}
           <div className="space-y-3">
             <h4 className="text-white text-sm font-semibold tracking-wider uppercase">
               Navegação
             </h4>
             <ul className="space-y-2 text-sm">
               <li>
+                <Link to="/" className="hover:text-white transition-colors">
+                  Início
+                </Link>
+              </li>
+              <li>
+                <Link to="/servicos" className="hover:text-white transition-colors">
+                  Serviços Técnicos
+                </Link>
+              </li>
+              <li>
                 <Link to="/equipamentos" className="hover:text-white transition-colors">
-                  Equipamentos Abrangidos
+                  Equipamentos
                 </Link>
               </li>
               <li>
@@ -164,18 +161,13 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
                 </Link>
               </li>
               <li>
-                <Link to="/como-funciona" className="hover:text-white transition-colors">
-                  Como Funciona o Diagnóstico
-                </Link>
-              </li>
-              <li>
                 <Link to="/sobre" className="hover:text-white transition-colors">
                   Sobre a Ama Tec
                 </Link>
               </li>
               <li>
-                <Link to="/faq" className="hover:text-white transition-colors">
-                  Perguntas Frequentes (FAQ)
+                <Link to="/como-funciona" className="hover:text-white transition-colors">
+                  Como Funciona
                 </Link>
               </li>
               <li>
@@ -184,7 +176,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
                 </Link>
               </li>
               <li>
-                <Link to="/solicitar-assistencia" className="hover:text-white text-sky-400 font-medium transition-colors">
+                <Link
+                  to="/solicitar-assistencia"
+                  className="hover:text-white text-sky-400 font-medium transition-colors"
+                >
                   Solicitar Assistência
                 </Link>
               </li>

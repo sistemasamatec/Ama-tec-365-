@@ -15,6 +15,8 @@ export interface ServiceItem {
   id: string;
   slug: string;
   name: string;
+  menuLabel?: string;
+  menuHidden?: boolean;
   category: ServiceCategory;
   categoryName: string;
   shortDescription: string;
@@ -28,6 +30,8 @@ export interface ServiceItem {
   relatedServiceSlugs: string[];
   seoTitle: string;
   seoDescription: string;
+  status?: 'published' | 'draft' | 'archived';
+  updatedAt?: string;
 }
 
 export interface EquipmentItem {

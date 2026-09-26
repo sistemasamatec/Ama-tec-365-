@@ -28,6 +28,8 @@ import {
   getBackupContent,
   AdminSession,
 } from '../src/lib/server-storage';
+import { getVercelDeployStatus, triggerVercelRebuild } from '../src/lib/vercel-deploy';
+import { getDatabaseEngineType } from '../src/lib/serverless-db';
 
 /* Helper para envio de respostas JSON padronizadas */
 function sendJson(res: ServerResponse, statusCode: number, data: any) {
@@ -183,6 +185,7 @@ export default async function adminApiHandler(
           return sendJson(res, 400, { error: 'O nome do serviço é obrigatório.' });
         }
         const saved = saveServiceToDb(body, session.email);
+        triggerVercelRebuild(`Serviço criado: ${saved.name}`).catch(() => {});
         return sendJson(res, 201, saved);
       } catch {
         return sendJson(res, 400, { error: 'Erro ao criar serviço.' });
@@ -196,6 +199,7 @@ export default async function adminApiHandler(
       try {
         const body = await readBody(req);
         const saved = saveServiceToDb({ ...body, id }, session.email);
+        triggerVercelRebuild(`Serviço atualizado: ${saved.name}`).catch(() => {});
         return sendJson(res, 200, saved);
       } catch {
         return sendJson(res, 400, { error: 'Erro ao atualizar serviço.' });
@@ -203,10 +207,16 @@ export default async function adminApiHandler(
     }
     if (method === 'PATCH' && urlObj.searchParams.get('action') === 'archive') {
       const archived = archiveServiceInDb(id, session.email);
+      if (archived) {
+        triggerVercelRebuild(`Serviço arquivado: ${id}`).catch(() => {});
+      }
       return sendJson(res, archived ? 200 : 404, { success: archived });
     }
     if (method === 'DELETE') {
       const deleted = deleteServiceFromDb(id, session.email);
+      if (deleted) {
+        triggerVercelRebuild(`Serviço eliminado: ${id}`).catch(() => {});
+      }
       return sendJson(res, deleted ? 200 : 404, { success: deleted });
     }
   }
@@ -367,6 +377,23 @@ export default async function adminApiHandler(
     res.setHeader('Content-Type', 'application/json');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
     return res.end(content);
+  }
+
+  // 13. ESTADO DE DEPLOY & SERVERLESS DA VERCEL
+  if (pathname === '/api/admin/deploy-status' && method === 'GET') {
+    const deployStatus = getVercelDeployStatus();
+    const dbEngine = getDatabaseEngineType();
+    return sendJson(res, 200, {
+      ...deployStatus,
+      dbEngine,
+      prerenderOnBuild: true,
+      staticRoutesCount: 30,
+    });
+  }
+
+  if (pathname === '/api/admin/trigger-rebuild' && method === 'POST') {
+    const result = await triggerVercelRebuild('Rebuild manual solicitado pelo administrador');
+    return sendJson(res, result.triggered ? 200 : 400, result);
   }
 
   // Rota não reconhecida

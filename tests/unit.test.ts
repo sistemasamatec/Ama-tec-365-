@@ -126,6 +126,7 @@ import {
   getAllLeadsFromServer,
   updateLeadStatusOnServer,
   deleteLeadFromServer,
+  getDataDir,
 } from '../src/lib/server-storage';
 
 const testLeadId = `TEST-LEAD-${Date.now()}`;
@@ -314,5 +315,38 @@ const csv = exportLeadsToCsv();
 assert.ok(csv.startsWith('\uFEFF'), 'CSV deve ter BOM UTF-8 para compatibilidade com Microsoft Excel');
 assert.ok(csv.includes('ID,Data,Nome,Telefone'), 'CSV deve conter cabeçalho com campos oficiais');
 console.log('✅ Cópias de segurança e exportação CSV validadas.');
+
+// 12. Teste de Resiliência e Persistência em Ambiente Vercel Serverless (Read-only Filesystem)
+console.log('\n12. Testando resiliência e persistência em ambiente Vercel Serverless (read-only /var/task)...');
+const previousVercel = process.env.VERCEL;
+process.env.VERCEL = '1';
+try {
+  const serverlessDir = getDataDir();
+  assert.ok(serverlessDir.startsWith('/tmp'), 'Em ambiente Vercel, o diretório de escrita deve ser isolado em /tmp');
+  
+  const testLeadId = `lead-serverless-${Date.now()}`;
+  saveLeadToServer({
+    id: testLeadId,
+    createdAt: new Date().toISOString(),
+    name: 'Cliente Teste Vercel',
+    phone: '930 372 597',
+    equipment: 'Frigorífico Industrial',
+    problemDescription: 'Compressor não arranca em alta temperatura',
+    location: 'Golf 2, Luanda',
+    status: 'Pendente',
+  });
+
+  const leadsInServerless = getAllLeadsFromServer();
+  const savedLead = leadsInServerless.find((l) => l.id === testLeadId);
+  assert.ok(savedLead, 'Lead deve persistir sem erros de EROFS no ambiente serverless');
+  assert.strictEqual(savedLead.name, 'Cliente Teste Vercel');
+  console.log('✅ Persistência serverless em /tmp validada com sucesso (zero erros de EROFS).');
+} finally {
+  if (previousVercel !== undefined) {
+    process.env.VERCEL = previousVercel;
+  } else {
+    delete process.env.VERCEL;
+  }
+}
 
 console.log('\n🎉 Todos os testes passaram com 100% de sucesso!');

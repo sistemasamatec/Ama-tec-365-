@@ -1,1 +1,52 @@
-[]
+[
+  {
+    "id": "lead-serverless-1790412470322",
+    "createdAt": "2026-09-26T08:47:50.322Z",
+    "name": "Cliente Teste Vercel",
+    "phone": "930 372 597",
+    "equipment": "Frigorífico Industrial",
+    "problemDescription": "Compressor não arranca em alta temperatura",
+    "location": "Golf 2, Luanda",
+    "status": "Pendente"
+  },
+  {
+    "id": "lead-serverless-1790412112313",
+    "createdAt": "2026-09-26T08:41:52.313Z",
+    "name": "Cliente Teste Vercel",
+    "phone": "930 372 597",
+    "equipment": "Frigorífico Industrial",
+    "problemDescription": "Compressor não arranca em alta temperatura",
+    "location": "Golf 2, Luanda",
+    "status": "Pendente"
+  },
+  {
+    "id": "lead-serverless-1790412009169",
+    "createdAt": "2026-09-26T08:40:09.169Z",
+    "name": "Cliente Teste Vercel",
+    "phone": "930 372 597",
+    "equipment": "Frigorífico Industrial",
+    "problemDescription": "Compressor não arranca em alta temperatura",
+    "location": "Golf 2, Luanda",
+    "status": "Pendente"
+  },
+  {
+    "id": "lead-serverless-1790410997324",
+    "createdAt": "2026-09-26T08:23:17.324Z",
+    "name": "Cliente Teste Vercel",
+    "phone": "930 372 597",
+    "equipment": "Frigorífico Industrial",
+    "problemDescription": "Compressor não arranca em alta temperatura",
+    "location": "Golf 2, Luanda",
+    "status": "Pendente"
+  },
+  {
+    "id": "lead-serverless-1790410880836",
+    "createdAt": "2026-09-26T08:21:20.836Z",
+    "name": "Cliente Teste Vercel",
+    "phone": "930 372 597",
+    "equipment": "Frigorífico Industrial",
+    "problemDescription": "Compressor não arranca em alta temperatura",
+    "location": "Golf 2, Luanda",
+    "status": "Pendente"
+  }
+]

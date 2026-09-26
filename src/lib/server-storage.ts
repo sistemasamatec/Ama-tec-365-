@@ -133,61 +133,127 @@ export interface AuditLogEntry {
   details?: Record<string, any>;
 }
 
+import {
+  getFallbackDataDir,
+  getDatabaseEngineType,
+  dbUpsertDocument,
+  dbSaveCollection,
+  dbGetCollection,
+  dbSaveBackup,
+  dbGetBackup,
+} from './serverless-db';
+
 /* =========================================================================
-   DIRETÓRIOS E FICHEIROS PERSISTENTES
+   DIRETÓRIOS E FICHEIROS PERSISTENTES (COM SUPORTE A SERVERLESS READ-ONLY FS)
 ========================================================================= */
 
-const DATA_DIR = path.resolve(process.cwd(), 'data');
-const BACKUPS_DIR = path.join(DATA_DIR, 'backups');
-const UPLOADS_DIR = path.resolve(process.cwd(), 'public', 'brand', 'uploads');
+export function getDataDir(): string {
+  return getFallbackDataDir();
+}
 
-const LEADS_FILE = path.join(DATA_DIR, 'leads.json');
-const LEADS_LOG = path.join(DATA_DIR, 'leads.log');
-const USERS_FILE = path.join(DATA_DIR, 'users.json');
-const SESSIONS_FILE = path.join(DATA_DIR, 'sessions.json');
-const LOGIN_ATTEMPTS_FILE = path.join(DATA_DIR, 'login-attempts.json');
-const SERVICES_FILE = path.join(DATA_DIR, 'services.json');
-const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
-const EQUIPMENT_FILE = path.join(DATA_DIR, 'equipment.json');
-const GALLERY_FILE = path.join(DATA_DIR, 'gallery.json');
-const TESTIMONIALS_FILE = path.join(DATA_DIR, 'testimonials.json');
-const AUDIT_FILE = path.join(DATA_DIR, 'audit.json');
+function getFilePath(filename: string): string {
+  return path.join(getDataDir(), filename);
+}
+
+function getBackupsDir(): string {
+  const dir = path.join(getDataDir(), 'backups');
+  if (!fs.existsSync(dir)) {
+    fs.mkdirSync(dir, { recursive: true });
+  }
+  return dir;
+}
+
+function getUploadsDir(): string {
+  // Tenta usar public/brand/uploads se gravável, senão usa getDataDir()/uploads
+  const publicUploads = path.resolve(process.cwd(), 'public', 'brand', 'uploads');
+  try {
+    if (!fs.existsSync(publicUploads)) {
+      fs.mkdirSync(publicUploads, { recursive: true });
+    }
+    fs.accessSync(publicUploads, fs.constants.W_OK);
+    return publicUploads;
+  } catch {
+    const fallbackUploads = path.join(getDataDir(), 'uploads');
+    if (!fs.existsSync(fallbackUploads)) {
+      fs.mkdirSync(fallbackUploads, { recursive: true });
+    }
+    return fallbackUploads;
+  }
+}
+
+const LEADS_FILE = 'leads.json';
+const LEADS_LOG = 'leads.log';
+const USERS_FILE = 'users.json';
+const SESSIONS_FILE = 'sessions.json';
+const LOGIN_ATTEMPTS_FILE = 'login-attempts.json';
+const SERVICES_FILE = 'services.json';
+const SETTINGS_FILE = 'settings.json';
+const EQUIPMENT_FILE = 'equipment.json';
+const GALLERY_FILE = 'gallery.json';
+const TESTIMONIALS_FILE = 'testimonials.json';
+const AUDIT_FILE = 'audit.json';
 
 /* =========================================================================
    UTILITÁRIOS DE SEGURANÇA E ARQUIVO
 ========================================================================= */
 
 function ensureDirectories(): void {
-  for (const dir of [DATA_DIR, BACKUPS_DIR, UPLOADS_DIR]) {
-    if (!fs.existsSync(dir)) {
-      fs.mkdirSync(dir, { recursive: true });
-    }
+  const d = getDataDir();
+  if (!fs.existsSync(d)) {
+    fs.mkdirSync(d, { recursive: true });
   }
+  getBackupsDir();
+  getUploadsDir();
 }
 
-function safeReadJson<T>(filePath: string, fallback: T): T {
+function safeReadJson<T>(filename: string, fallback: T): T {
   try {
     ensureDirectories();
-    if (!fs.existsSync(filePath)) {
-      return fallback;
+    const primaryPath = getFilePath(filename);
+
+    if (fs.existsSync(primaryPath)) {
+      const raw = fs.readFileSync(primaryPath, 'utf-8');
+      if (raw.trim()) return JSON.parse(raw);
     }
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    if (!raw.trim()) return fallback;
-    return JSON.parse(raw);
+
+    // Se ainda não existir em /tmp (primeiro arranque na Vercel), lê da semente estática se disponível
+    const seedPath = path.resolve(process.cwd(), 'data', filename);
+    if (seedPath !== primaryPath && fs.existsSync(seedPath)) {
+      const raw = fs.readFileSync(seedPath, 'utf-8');
+      if (raw.trim()) {
+        const parsed = JSON.parse(raw);
+        // Grava no diretório primário para persistência na sessão lambda
+        try {
+          safeWriteJson(filename, parsed);
+        } catch {}
+        return parsed;
+      }
+    }
+
+    return fallback;
   } catch (err) {
-    console.error(`[Ama Tec DB] Erro ao ler ficheiro ${filePath}:`, err);
+    console.error(`[Ama Tec DB] Erro ao ler ficheiro ${filename}:`, err);
     return fallback;
   }
 }
 
-function safeWriteJson<T>(filePath: string, data: T): void {
+function safeWriteJson<T>(filename: string, data: T): void {
   try {
     ensureDirectories();
+    const filePath = getFilePath(filename);
     const tempFile = `${filePath}.${Date.now()}.${Math.random().toString(36).slice(2, 7)}.tmp`;
     fs.writeFileSync(tempFile, JSON.stringify(data, null, 2), 'utf-8');
     fs.renameSync(tempFile, filePath);
+
+    // Sincroniza assincronamente com a base de dados serverless (PostgreSQL ou Turso) se configurada
+    const collectionName = filename.replace(/\.json$/, '');
+    if (Array.isArray(data)) {
+      dbSaveCollection(collectionName, data).catch((e) =>
+        console.warn(`[Ama Tec DB] Sincronização serverless em segundo plano:`, e)
+      );
+    }
   } catch (err) {
-    console.error(`[Ama Tec DB] Erro ao gravar ficheiro ${filePath}:`, err);
+    console.error(`[Ama Tec DB] Erro ao gravar ficheiro ${filename}:`, err);
     throw err;
   }
 }
@@ -600,7 +666,7 @@ export function saveUploadedLogo(
 
   const ext = mimeType === 'image/svg+xml' ? 'svg' : 'png';
   const newFileName = `logo-${Date.now()}.${ext}`;
-  const filePath = path.join(UPLOADS_DIR, newFileName);
+  const filePath = path.join(getUploadsDir(), newFileName);
   fs.writeFileSync(filePath, buffer);
 
   const newUrl = `/brand/uploads/${newFileName}`;
@@ -659,6 +725,23 @@ export function getAllServicesFromDb(): DbServiceItem[] {
     }));
     safeWriteJson(SERVICES_FILE, services);
     logAudit('SERVICES_SEEDED', `${services.length} serviços`, 'sistema', '127.0.0.1');
+  } else {
+    // Assegura que todos os serviços canónicos de src/content/services.ts estão sincronizados
+    const existingSlugs = new Set(services.map((s) => s.slug));
+    let hasNew = false;
+    for (const canonical of SERVICES) {
+      if (!existingSlugs.has(canonical.slug)) {
+        services.push({
+          ...canonical,
+          status: 'published',
+          updatedAt: new Date().toISOString(),
+        });
+        hasNew = true;
+      }
+    }
+    if (hasNew) {
+      safeWriteJson(SERVICES_FILE, services);
+    }
   }
   return services;
 }
@@ -770,7 +853,7 @@ export function saveLeadToServer(lead: ServerLead): void {
 
   const logLine = `[${new Date().toISOString()}] LEAD_SAVED | id=${lead.id} | name=${lead.name} | phone=${lead.phone} | eq=${lead.equipment} | status=${lead.status}\n`;
   ensureDirectories();
-  fs.appendFileSync(LEADS_LOG, logLine, 'utf-8');
+  fs.appendFileSync(getFilePath(LEADS_LOG), logLine, 'utf-8');
 }
 
 export function updateLeadStatusOnServer(id: string, status: ServerLead['status'], notes?: string): boolean {
@@ -786,7 +869,7 @@ export function updateLeadStatusOnServer(id: string, status: ServerLead['status'
 
   const logLine = `[${new Date().toISOString()}] STATUS_UPDATED | id=${id} | newStatus=${status}\n`;
   ensureDirectories();
-  fs.appendFileSync(LEADS_LOG, logLine, 'utf-8');
+  fs.appendFileSync(getFilePath(LEADS_LOG), logLine, 'utf-8');
   return true;
 }
 
@@ -798,7 +881,7 @@ export function deleteLeadFromServer(id: string): boolean {
   safeWriteJson(LEADS_FILE, filtered);
   const logLine = `[${new Date().toISOString()}] LEAD_DELETED | id=${id}\n`;
   ensureDirectories();
-  fs.appendFileSync(LEADS_LOG, logLine, 'utf-8');
+  fs.appendFileSync(getFilePath(LEADS_LOG), logLine, 'utf-8');
   return true;
 }
 
@@ -906,7 +989,7 @@ export function createFullBackup(userEmail: string = 'admin'): { filename: strin
   ensureDirectories();
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
   const filename = `amatec-backup-${timestamp}.json`;
-  const backupPath = path.join(BACKUPS_DIR, filename);
+  const backupPath = path.join(getBackupsDir(), filename);
 
   const payload = {
     createdAt: new Date().toISOString(),
@@ -935,12 +1018,13 @@ export function createFullBackup(userEmail: string = 'admin'): { filename: strin
 
 export function listBackups(): { filename: string; sizeBytes: number; createdAt: string }[] {
   ensureDirectories();
-  if (!fs.existsSync(BACKUPS_DIR)) return [];
-  const files = fs.readdirSync(BACKUPS_DIR).filter((f) => f.endsWith('.json'));
+  const backupsDir = getBackupsDir();
+  if (!fs.existsSync(backupsDir)) return [];
+  const files = fs.readdirSync(backupsDir).filter((f) => f.endsWith('.json'));
 
   return files
     .map((f) => {
-      const fullPath = path.join(BACKUPS_DIR, f);
+      const fullPath = path.join(backupsDir, f);
       const stat = fs.statSync(fullPath);
       return {
         filename: f,
@@ -953,7 +1037,7 @@ export function listBackups(): { filename: string; sizeBytes: number; createdAt:
 
 export function getBackupContent(filename: string): string | null {
   const safeName = path.basename(filename);
-  const fullPath = path.join(BACKUPS_DIR, safeName);
+  const fullPath = path.join(getBackupsDir(), safeName);
   if (!fs.existsSync(fullPath)) return null;
   return fs.readFileSync(fullPath, 'utf-8');
 }
