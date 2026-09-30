@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { motion } from 'motion/react';
 import {
   Wrench,
   CheckCircle,
@@ -11,6 +12,7 @@ import {
   AlertCircle,
   MapPin,
   Clock,
+  Cpu,
 } from 'lucide-react';
 import { SERVICES } from '../content/services';
 import { COMPANY } from '../content/company';
@@ -22,7 +24,6 @@ import {
   getBreadcrumbJsonLd,
 } from '../lib/seo';
 import { AssistanceForm } from '../components/forms/AssistanceForm';
-import { TodoNotice } from '../components/ui/TodoNotice';
 import { track } from '../lib/analytics';
 import { useServices } from '../context/ServicesContext';
 
@@ -108,11 +109,16 @@ export const ServiceDetailPage: React.FC = () => {
         </div>
       </div>
 
-      {/* SERVICE HERO & AD LANDING HEADER */}
-      <section className="bg-slate-950 text-white py-12 sm:py-16 border-y border-slate-800">
+      {/* SERVICE HERO & AD LANDING HEADER COM BANNER 16:9 E ANIMAÇÃO */}
+      <section className="bg-slate-950 text-white py-12 sm:py-16 border-y border-slate-800 relative overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
-            <div className="lg:col-span-8 space-y-4">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45 }}
+              className="lg:col-span-7 space-y-4"
+            >
               <div className="flex items-center gap-2 text-xs text-sky-400 font-semibold uppercase tracking-wider">
                 <span className="w-2 h-2 rounded-full bg-sky-400"></span>
                 <span>{service.categoryName}</span>
@@ -153,24 +159,48 @@ export const ServiceDetailPage: React.FC = () => {
                   <span>WhatsApp Contextual</span>
                 </a>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Photo Placeholder strictly flagged with TODO_CONTEUDO */}
-            <div className="lg:col-span-4">
-              <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center space-y-3">
-                <TodoNotice
-                  label={`${service.imagePlaceholder}`}
-                  type="photo"
+            {/* Banner Oficial do Serviço (16:9) com Overlay e Selo Técnico */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              className="lg:col-span-5"
+            >
+              <div className="relative aspect-[16/9] w-full rounded-2xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-900 group">
+                <img
+                  src={
+                    service.bannerUrl ||
+                    service.imageUrl ||
+                    (service.category === 'domestico'
+                      ? '/images/service-appliances.jpg'
+                      : '/images/service-electronics.jpg')
+                  }
+                  alt={service.imageAlt || `Bancada de intervenção: ${service.name}`}
+                  loading="lazy"
+                  width="800"
+                  height="450"
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                 />
-                <p className="text-[11px] text-slate-400 leading-relaxed">
-                  Em estrita conformidade com as regras da Ama Tec, não são usadas fotografias genéricas. Aguarda fotografia real de intervenção técnica na bancada da Ama Tec.
-                </p>
-                <div className="pt-2 border-t border-slate-800/80 flex items-center justify-center gap-2 text-xs text-sky-400 font-medium">
-                  <ShieldCheck className="w-4 h-4" />
-                  <span>Garantia oficial sobre o serviço</span>
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent pointer-events-none" />
+
+                {/* Badge técnico no topo do banner */}
+                <div className="absolute top-3 left-3 px-3 py-1.5 rounded-lg bg-slate-900/90 backdrop-blur-xs text-white text-xs font-semibold border border-slate-700/60 flex items-center gap-2 shadow-sm">
+                  <Cpu className="w-3.5 h-3.5 text-sky-400" />
+                  <span>Bancada Oficial Ama Tec</span>
+                </div>
+
+                {/* Selo no fundo do banner */}
+                <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-xs text-slate-200">
+                  <div className="flex items-center gap-1.5 font-medium">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <span>Garantia de Assistência</span>
+                  </div>
+                  <span className="text-[11px] text-slate-400 font-mono">Golf 2 / Luanda</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>

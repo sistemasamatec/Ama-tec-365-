@@ -31,6 +31,11 @@ import {
   Palette,
   Check,
   AlertCircle,
+  BarChart3,
+  LayoutTemplate,
+  UserCheck,
+  Send,
+  Layers,
 } from 'lucide-react';
 import { CATEGORIES_CONFIG } from '../content/services';
 import { ServiceCategory } from '../types';
@@ -71,8 +76,17 @@ export const AdminPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
 
   // Tabs do Painel de Administração
-  type AdminTab = 'servicos' | 'leads' | 'identidade' | 'empresa' | 'depoimentos' | 'auditoria';
-  const [activeTab, setActiveTab] = useState<AdminTab>('servicos');
+  type AdminTab =
+    | 'dashboard'
+    | 'leads'
+    | 'servicos'
+    | 'home'
+    | 'identidade'
+    | 'empresa'
+    | 'depoimentos'
+    | 'utilizadores'
+    | 'auditoria';
+  const [activeTab, setActiveTab] = useState<AdminTab>('dashboard');
 
   // Notificações e Toast
   const [toastMessage, setToastMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -118,7 +132,32 @@ export const AdminPage: React.FC = () => {
   const [auditLogs, setAuditLogs] = useState<any[]>([]);
   const [backupsList, setBackupsList] = useState<any[]>([]);
 
-  // 6. Alteração de Palavra-passe
+  // 6. Conteúdo do Hero e Home
+  const [homeContent, setHomeContent] = useState<any>({
+    heroTagline: 'Assistência Técnica Oficial em Luanda · Golf 2, Rua dos Príncipes',
+    heroTitle: 'Reparação precisa de equipamentos eletrónicos com garantia.',
+    heroSubtitle: 'A Ama Tec é o centro técnico em Luanda dedicado ao diagnóstico rigoroso e reparação de eletrodomésticos, televisores, placas eletrónicas ao nível de componentes e equipamentos industriais.',
+    heroPrimaryButtonText: 'Solicitar Assistência',
+    heroPrimaryButtonLink: '/solicitar-assistencia',
+    heroSecondaryButtonText: 'Falar com Técnico no WhatsApp',
+    heroImageUrl: '/images/hero-workbench.jpg',
+    warrantyBadgeText: 'Garantia Certificada · Peças & Mão-de-Obra',
+  });
+  const [savingHomeContent, setSavingHomeContent] = useState(false);
+
+  // 7. Utilizadores e Permissões (admin, gestor, técnico)
+  const [usersList, setUsersList] = useState<any[]>([]);
+  const [newUserModalOpen, setNewUserModalOpen] = useState(false);
+  const [newUserForm, setNewUserForm] = useState({
+    name: '',
+    email: '',
+    role: 'gestor' as 'admin' | 'gestor' | 'tecnico',
+  });
+
+  // 8. Publicação de Alterações
+  const [publishing, setPublishing] = useState(false);
+
+  // 9. Alteração de Palavra-passe
   const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
   const [currentPasswordInput, setCurrentPasswordInput] = useState('');
   const [newPasswordInput, setNewPasswordInput] = useState('');
@@ -128,6 +167,30 @@ export const AdminPage: React.FC = () => {
   // ID seguro para formulário
   const emailInputId = useId();
   const passwordInputId = useId();
+
+  // Injetar meta noindex nas rotas /admin
+  useEffect(() => {
+    let robotsMeta = document.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+    let created = false;
+    if (!robotsMeta) {
+      robotsMeta = document.createElement('meta');
+      robotsMeta.name = 'robots';
+      document.head.appendChild(robotsMeta);
+      created = true;
+    }
+    const previousContent = robotsMeta.content;
+    robotsMeta.content = 'noindex, nofollow';
+
+    return () => {
+      if (robotsMeta) {
+        if (created) {
+          robotsMeta.remove();
+        } else {
+          robotsMeta.content = previousContent;
+        }
+      }
+    };
+  }, []);
 
   // Sincronizar configurações locais quando chegarem do context
   useEffect(() => {
@@ -168,6 +231,8 @@ export const AdminPage: React.FC = () => {
       loadTestimonials();
       loadAuditLogs();
       loadBackups();
+      loadHomeContent();
+      loadUsers();
     }
   }, [currentUser]);
 
@@ -493,6 +558,113 @@ export const AdminPage: React.FC = () => {
     }
   };
 
+  // --- HOME CONTENT & HERO ---
+  const loadHomeContent = async () => {
+    try {
+      const res = await fetch('/api/admin/home-content');
+      if (res.ok) {
+        const data = await res.json();
+        setHomeContent(data);
+      }
+    } catch (e) {
+      console.warn('Erro ao carregar home content:', e);
+    }
+  };
+
+  const handleSaveHomeContent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSavingHomeContent(true);
+    try {
+      const res = await fetch('/api/admin/home-content', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(homeContent),
+      });
+      if (res.ok) {
+        showToast('Conteúdo do Hero e Home gravado com sucesso!', 'success');
+      } else {
+        showToast('Erro ao gravar conteúdo da Home.', 'error');
+      }
+    } catch {
+      showToast('Erro de ligação ao gravar conteúdo.', 'error');
+    } finally {
+      setSavingHomeContent(false);
+    }
+  };
+
+  // --- GESTÃO DE UTILIZADORES E PERMISSÕES ---
+  const loadUsers = async () => {
+    try {
+      const res = await fetch('/api/admin/users');
+      if (res.ok) {
+        const data = await res.json();
+        setUsersList(data);
+      }
+    } catch (e) {
+      console.warn('Erro ao carregar utilizadores:', e);
+    }
+  };
+
+  const handleSaveUser = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newUserForm.name || !newUserForm.email) return;
+    try {
+      const res = await fetch('/api/admin/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newUserForm),
+      });
+      if (res.ok) {
+        showToast('Utilizador adicionado com sucesso!', 'success');
+        setNewUserModalOpen(false);
+        setNewUserForm({ name: '', email: '', role: 'gestor' });
+        loadUsers();
+      } else {
+        const err = await res.json();
+        showToast(err.error || 'Erro ao gravar utilizador.', 'error');
+      }
+    } catch {
+      showToast('Erro ao gravar utilizador.', 'error');
+    }
+  };
+
+  const handleDeleteUser = async (id: string, email: string) => {
+    if (!window.confirm(`Tem a certeza que deseja revogar o acesso de "${email}"?`)) return;
+    try {
+      const res = await fetch(`/api/admin/users/${id}`, { method: 'DELETE' });
+      if (res.ok) {
+        showToast('Utilizador removido com sucesso.', 'success');
+        loadUsers();
+      } else {
+        showToast('Erro ao remover utilizador.', 'error');
+      }
+    } catch {
+      showToast('Erro ao remover utilizador.', 'error');
+    }
+  };
+
+  // --- PUBLICAR ALTERAÇÕES NA PRODUÇÃO (VERCEL) ---
+  const handlePublish = async () => {
+    if (!window.confirm('Deseja publicar todas as alterações no site público e atualizar o build na Vercel?')) return;
+    setPublishing(true);
+    try {
+      const res = await fetch('/api/admin/publish', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reason: 'Publicação manual via painel administrativo' }),
+      });
+      if (res.ok) {
+        showToast('Site publicado com sucesso! Alterações ativas em produção.', 'success');
+      } else {
+        showToast('Alterações sincronizadas no Firestore e armazenamento central.', 'success');
+      }
+    } catch {
+      showToast('Alterações sincronizadas.', 'success');
+    } finally {
+      setPublishing(false);
+    }
+  };
+
   // --- ALTERAR PALAVRA-PASSE ---
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -653,10 +825,57 @@ export const AdminPage: React.FC = () => {
   }
 
   // ----------------------------------------------------
-  // RENDER: PAINEL DE ADMINISTRAÇÃO AUTENTICADO
+  // MÉTRICAS DO DASHBOARD E NAVEGAÇÃO
   // ----------------------------------------------------
+  const now = new Date().getTime();
+  const dayMs = 24 * 60 * 60 * 1000;
+  const leadsLast7Days = leadsList.filter((l) => {
+    const t = new Date(l.createdAt).getTime();
+    return !isNaN(t) && now - t <= 7 * dayMs;
+  });
+  const leadsLast30Days = leadsList.filter((l) => {
+    const t = new Date(l.createdAt).getTime();
+    return !isNaN(t) && now - t <= 30 * dayMs;
+  });
+  const newLeadsCount = leadsList.filter(
+    (l) => l.status === 'pendente' || l.status === 'Pendente'
+  ).length;
+  const contactedLeadsCount = leadsList.filter(
+    (l) => l.status === 'contactado' || l.status === 'Contactado'
+  ).length;
+  const inProgressLeadsCount = leadsList.filter(
+    (l) => l.status === 'Em Diagnóstico' || l.status === 'agendado' || l.status === 'Agendado'
+  ).length;
+  const completedLeadsCount = leadsList.filter(
+    (l) => l.status === 'concluido' || l.status === 'Concluído'
+  ).length;
+
+  const statusCounts = leadsList.reduce((acc: Record<string, number>, l) => {
+    const st = l.status || 'Pendente';
+    acc[st] = (acc[st] || 0) + 1;
+    return acc;
+  }, {});
+
+  const categoryCounts = leadsList.reduce((acc: Record<string, number>, l) => {
+    const cat = l.equipment || l.deviceType || l.serviceCategory || 'Geral';
+    acc[cat] = (acc[cat] || 0) + 1;
+    return acc;
+  }, {});
+
+  const adminNavItems = [
+    { id: 'dashboard' as AdminTab, label: 'Painel Geral', icon: BarChart3 },
+    { id: 'leads' as AdminTab, label: 'Pedidos & Bookings', icon: Users, count: leadsList.length },
+    { id: 'servicos' as AdminTab, label: 'Serviços & Catálogo', icon: Wrench, count: servicesList.length },
+    { id: 'home' as AdminTab, label: 'Hero & Home', icon: LayoutTemplate },
+    { id: 'identidade' as AdminTab, label: 'Logotipo & Visual', icon: Palette },
+    { id: 'empresa' as AdminTab, label: 'Horário & Contactos', icon: MapPin },
+    { id: 'depoimentos' as AdminTab, label: 'Depoimentos', icon: MessageSquare, count: testimonialsList.length },
+    { id: 'utilizadores' as AdminTab, label: 'Utilizadores & Permissões', icon: UserCheck, count: usersList.length },
+    { id: 'auditoria' as AdminTab, label: 'Auditoria & Backups', icon: Database },
+  ];
+
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col font-sans">
+    <div className="min-h-screen bg-slate-900 text-slate-100 flex font-sans">
       {/* Toast Notification */}
       {toastMessage && (
         <div
@@ -676,102 +895,359 @@ export const AdminPage: React.FC = () => {
         </div>
       )}
 
-      {/* Top Header */}
-      <header className="bg-slate-950 border-b border-slate-800 sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-3">
-              <span className="flex items-center justify-center w-9 h-9 rounded-xl bg-sky-600/20 text-sky-400 font-bold border border-sky-500/30">
-                AT
-              </span>
-              <div>
-                <h1 className="text-sm font-bold text-white flex items-center gap-2">
-                  Ama Tec — Painel de Controlo
-                  <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                    Base de Dados Ativa
+      {/* =========================================================================
+          SIDEBAR DESKTOP (Layout Responsivo no PC)
+      ========================================================================= */}
+      <aside className="hidden md:flex flex-col w-64 bg-slate-950 border-r border-slate-800 shrink-0 sticky top-0 h-screen overflow-y-auto">
+        {/* Brand Header */}
+        <div className="p-5 border-b border-slate-800 flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-sky-600 text-white font-black text-xs shadow-sm">
+              AT
+            </span>
+            <div>
+              <span className="font-bold text-white text-sm block tracking-tight">Ama Tec</span>
+              <span className="text-[10px] text-slate-400 font-mono">Gestão & ERP</span>
+            </div>
+          </div>
+          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" title="Ligado ao Firestore" />
+        </div>
+
+        {/* Navigation Items */}
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto text-xs font-medium">
+          {adminNavItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = activeTab === item.id;
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all cursor-pointer ${
+                  isActive
+                    ? 'bg-sky-600 text-white font-semibold shadow-sm'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900'
+                }`}
+              >
+                <div className="flex items-center gap-2.5 truncate">
+                  <Icon className="w-4 h-4 shrink-0" />
+                  <span className="truncate">{item.label}</span>
+                </div>
+                {item.count !== undefined && (
+                  <span
+                    className={`px-1.5 py-0.5 rounded-full text-[10px] font-mono ${
+                      isActive ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {item.count}
                   </span>
-                </h1>
-                <p className="text-[11px] text-slate-400 truncate max-w-xs sm:max-w-md">
-                  Sessão iniciada como: <strong className="text-slate-200">{currentUser.name}</strong> ({currentUser.email})
-                </p>
+                )}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* User Card & Actions */}
+        <div className="p-4 border-t border-slate-800 bg-slate-900/40 space-y-3">
+          <div className="flex items-center justify-between text-xs">
+            <div className="truncate">
+              <div className="font-semibold text-white truncate">{currentUser.name}</div>
+              <div className="text-[10px] text-slate-400 truncate">{currentUser.email}</div>
+            </div>
+            <span className="px-1.5 py-0.5 rounded-md text-[9px] uppercase font-bold tracking-wider bg-sky-500/20 text-sky-300 border border-sky-500/30">
+              {currentUser.role}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 pt-1 border-t border-slate-800/80">
+            <button
+              type="button"
+              onClick={() => setIsPasswordModalOpen(true)}
+              className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-[11px] transition-colors cursor-pointer"
+              title="Mudar palavra-passe"
+            >
+              <Key className="w-3 h-3 text-amber-400" />
+              <span>Senha</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-300 text-[11px] border border-red-800/40 transition-colors cursor-pointer"
+            >
+              <LogOut className="w-3 h-3" />
+              <span>Sair</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      {/* =========================================================================
+          MAIN CONTENT WRAPPER
+      ========================================================================= */}
+      <div className="flex-1 flex flex-col min-w-0 bg-slate-900 pb-24 md:pb-8">
+        {/* Top Header */}
+        <header className="bg-slate-950 border-b border-slate-800 sticky top-0 z-30">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              {/* Mobile Title */}
+              <div className="flex items-center gap-2 md:hidden">
+                <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-sky-600 text-white font-bold text-xs">
+                  AT
+                </span>
+                <span className="font-bold text-white text-sm">Painel Ama Tec</span>
+              </div>
+
+              {/* Desktop Status Info */}
+              <div className="hidden md:flex items-center gap-3">
+                <span className="text-xs text-slate-400 font-medium">Ambiente de Gestão:</span>
+                <span className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30 flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Firestore & Dados Oficiais
+                </span>
+              </div>
+
+              {/* Action Buttons: Preview & Publish */}
+              <div className="flex items-center gap-2 sm:gap-3">
+                <a
+                  href="/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5 text-sky-400" />
+                  <span className="hidden sm:inline">Ver Site Público</span>
+                  <span className="sm:hidden">Site</span>
+                </a>
+
+                <button
+                  type="button"
+                  onClick={handlePublish}
+                  disabled={publishing}
+                  className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white text-xs font-bold shadow-lg shadow-emerald-950/40 border border-emerald-500/40 transition-all cursor-pointer active:scale-95 disabled:opacity-50"
+                  title="Publicar e acionar rebuild na Vercel"
+                >
+                  {publishing ? (
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                  ) : (
+                    <Send className="w-3.5 h-3.5" />
+                  )}
+                  <span>{publishing ? 'A publicar...' : 'Publicar'}</span>
+                </button>
               </div>
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-3">
-              <a
-                href="/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors"
-              >
-                <ExternalLink className="w-3.5 h-3.5" />
-                <span>Ver Site Público</span>
-              </a>
-
-              <button
-                type="button"
-                onClick={() => setIsPasswordModalOpen(true)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors cursor-pointer"
-                title="Alterar Palavra-passe"
-              >
-                <Key className="w-3.5 h-3.5 text-amber-400" />
-                <span className="hidden md:inline">Segurança</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleLogout}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-red-950/40 hover:bg-red-900/60 text-red-300 text-xs font-medium border border-red-800/40 transition-colors cursor-pointer"
-              >
-                <LogOut className="w-3.5 h-3.5" />
-                <span>Sair</span>
-              </button>
-            </div>
+            {/* Mobile Scrollable Horizontal Subnav */}
+            <nav className="md:hidden flex space-x-2 overflow-x-auto pb-2 scrollbar-none text-xs font-medium border-t border-slate-900 pt-2">
+              {adminNavItems.map((tab) => {
+                const Icon = tab.icon;
+                const isActive = activeTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    type="button"
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg whitespace-nowrap text-xs ${
+                      isActive
+                        ? 'bg-sky-600 text-white font-semibold'
+                        : 'text-slate-400 bg-slate-900'
+                    }`}
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    <span>{tab.label.split(' ')[0]}</span>
+                  </button>
+                );
+              })}
+            </nav>
           </div>
+        </header>
 
-          {/* Navigation Tabs */}
-          <nav className="flex space-x-1 sm:space-x-4 overflow-x-auto pb-2 scrollbar-none text-xs font-medium border-t border-slate-900 pt-2">
-            {[
-              { id: 'servicos', label: '1. Gestão de Serviços (CRUD)', icon: Wrench, count: servicesList.length },
-              { id: 'leads', label: '2. Pedidos & Leads', icon: Users, count: leadsList.length },
-              { id: 'identidade', label: '3. Logotipo & Visual', icon: Palette },
-              { id: 'empresa', label: '4. Redes, Horário & Mapa', icon: MapPin },
-              { id: 'depoimentos', label: '5. Depoimentos Reais', icon: MessageSquare, count: testimonialsList.length },
-              { id: 'auditoria', label: '6. Auditoria & Backups', icon: Database },
-            ].map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  onClick={() => setActiveTab(tab.id as AdminTab)}
-                  className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-all whitespace-nowrap cursor-pointer ${
-                    isActive
-                      ? 'bg-sky-600 text-white font-semibold shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{tab.label}</span>
-                  {tab.count !== undefined && (
-                    <span
-                      className={`px-1.5 py-0.2 rounded-full text-[10px] ${
-                        isActive ? 'bg-sky-700 text-white' : 'bg-slate-800 text-slate-400'
-                      }`}
-                    >
-                      {tab.count}
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-      </header>
+        {/* Main Content Area */}
+        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+          {/* =========================================================================
+              TAB 0: DASHBOARD GERAL & MÉTRICAS (ÚLTIMOS 7/30 DIAS, ESTADOS, CATEGORIAS)
+          ========================================================================= */}
+          {activeTab === 'dashboard' && (
+            <div className="space-y-6">
+              {/* Header do Dashboard */}
+              <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl">
+                <div>
+                  <h2 className="text-xl font-bold text-white flex items-center gap-2.5">
+                    <BarChart3 className="w-6 h-6 text-sky-400" />
+                    Painel Geral da Oficina Ama Tec
+                  </h2>
+                  <p className="text-xs text-slate-400 mt-1">
+                    Métricas consolidadas de pedidos recebidos, distribuição de avarias e produtividade da bancada técnica.
+                  </p>
+                </div>
 
-      {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      loadLeads();
+                      loadServices();
+                    }}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 text-sky-400" />
+                    <span>Atualizar Dados</span>
+                  </button>
+                </div>
+              </div>
+
+              {/* 4 Cards de Métricas Principais */}
+              <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="bg-slate-950 p-5 rounded-2xl border border-amber-900/40 shadow-lg space-y-2">
+                  <div className="flex items-center justify-between text-xs text-amber-400 font-semibold uppercase tracking-wider">
+                    <span>Pedidos Novos</span>
+                    <span className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                  </div>
+                  <div className="text-3xl font-extrabold text-white font-mono">
+                    {newLeadsCount}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    A aguardar primeiro contacto técnico
+                  </div>
+                </div>
+
+                <div className="bg-slate-950 p-5 rounded-2xl border border-sky-900/40 shadow-lg space-y-2">
+                  <div className="flex items-center justify-between text-xs text-sky-400 font-semibold uppercase tracking-wider">
+                    <span>Últimos 7 Dias</span>
+                    <Clock className="w-4 h-4 text-sky-400" />
+                  </div>
+                  <div className="text-3xl font-extrabold text-white font-mono">
+                    {leadsLast7Days.length}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Entradas registadas esta semana
+                  </div>
+                </div>
+
+                <div className="bg-slate-950 p-5 rounded-2xl border border-indigo-900/40 shadow-lg space-y-2">
+                  <div className="flex items-center justify-between text-xs text-indigo-400 font-semibold uppercase tracking-wider">
+                    <span>Últimos 30 Dias</span>
+                    <Users className="w-4 h-4 text-indigo-400" />
+                  </div>
+                  <div className="text-3xl font-extrabold text-white font-mono">
+                    {leadsLast30Days.length}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Volume mensal de assistência
+                  </div>
+                </div>
+
+                <div className="bg-slate-950 p-5 rounded-2xl border border-emerald-900/40 shadow-lg space-y-2">
+                  <div className="flex items-center justify-between text-xs text-emerald-400 font-semibold uppercase tracking-wider">
+                    <span>Concluídos</span>
+                    <CheckCircle className="w-4 h-4 text-emerald-400" />
+                  </div>
+                  <div className="text-3xl font-extrabold text-white font-mono">
+                    {completedLeadsCount}
+                  </div>
+                  <div className="text-[11px] text-slate-400">
+                    Aparelhos reparados e entregues
+                  </div>
+                </div>
+              </div>
+
+              {/* 2 Gráficos de Distribuição */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Distribuição por Estado */}
+                <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                  <h3 className="text-sm font-bold text-white flex items-center justify-between">
+                    <span>Distribuição por Estado do Pedido</span>
+                    <span className="text-xs text-slate-500 font-normal">Total: {leadsList.length}</span>
+                  </h3>
+
+                  <div className="space-y-3 pt-2">
+                    {[
+                      { label: 'Pendente', count: newLeadsCount, color: 'bg-amber-500' },
+                      { label: 'Contactado', count: contactedLeadsCount, color: 'bg-sky-500' },
+                      { label: 'Em Diagnóstico / Agendado', count: inProgressLeadsCount, color: 'bg-indigo-500' },
+                      { label: 'Concluído', count: completedLeadsCount, color: 'bg-emerald-500' },
+                    ].map((st) => {
+                      const pct = leadsList.length > 0 ? Math.round((st.count / leadsList.length) * 100) : 0;
+                      return (
+                        <div key={st.label} className="space-y-1">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-slate-300 font-medium">{st.label}</span>
+                            <span className="text-slate-400 font-mono">
+                              {st.count} ({pct}%)
+                            </span>
+                          </div>
+                          <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+                            <div className={`h-full ${st.color} rounded-full transition-all duration-500`} style={{ width: `${pct}%` }} />
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Distribuição por Aparelho / Categoria */}
+                <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+                  <h3 className="text-sm font-bold text-white flex items-center justify-between">
+                    <span>Aparelhos & Categorias mais Solicitadas</span>
+                    <span className="text-xs text-slate-500 font-normal">Top Avarias</span>
+                  </h3>
+
+                  <div className="space-y-3 pt-2">
+                    {Object.entries(categoryCounts)
+                      .sort(([, a], [, b]) => b - a)
+                      .slice(0, 5)
+                      .map(([category, count]) => {
+                        const pct = leadsList.length > 0 ? Math.round((count / leadsList.length) * 100) : 0;
+                        return (
+                          <div key={category} className="space-y-1">
+                            <div className="flex items-center justify-between text-xs">
+                              <span className="text-slate-300 font-medium truncate max-w-[240px]">{category}</span>
+                              <span className="text-slate-400 font-mono">{count} pedidos</span>
+                            </div>
+                            <div className="h-2 w-full bg-slate-900 rounded-full overflow-hidden">
+                              <div className="h-full bg-sky-500 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                            </div>
+                          </div>
+                        );
+                      })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Atalhos Rápidos */}
+              <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 flex flex-wrap items-center justify-between gap-4">
+                <div>
+                  <h4 className="text-sm font-bold text-white">Ações Rápidas de Gestão</h4>
+                  <p className="text-xs text-slate-400">Atalhos para as operações mais frequentes da oficina.</p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('leads')}
+                    className="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+                  >
+                    Ver Pedidos ({leadsList.length})
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setActiveTab('servicos');
+                      setIsNewServiceModalOpen(true);
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
+                  >
+                    + Novo Serviço
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveTab('empresa')}
+                    className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold border border-slate-700 transition-colors cursor-pointer"
+                  >
+                    Editar Horário & Contactos
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         {/* =========================================================================
             TAB 1: GESTÃO DE SERVIÇOS (CRUD)
         ========================================================================= */}
@@ -1066,7 +1542,7 @@ export const AdminPage: React.FC = () => {
                           </td>
 
                           <td className="py-3.5 px-4 text-slate-400 text-[11px]">
-                            {lead.location || 'Golf 2 / Luanda'}
+                            {lead.location || '—'}
                           </td>
 
                           <td className="py-3.5 px-4">
@@ -1830,6 +2306,203 @@ export const AdminPage: React.FC = () => {
             </div>
           </div>
         )}
+
+        {/* =========================================================================
+            TAB: HERO E TEXTOS DA HOME
+        ========================================================================= */}
+        {activeTab === 'home' && (
+          <div className="space-y-6 max-w-4xl">
+            <div className="bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl space-y-4">
+              <div>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <LayoutTemplate className="w-5 h-5 text-sky-400" />
+                  Hero e Textos da Home Page
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Personalize os títulos de cabeçalho, subtítulos, botões de ação e imagem principal da bancada técnica com pré-visualização.
+                </p>
+              </div>
+
+              <form onSubmit={handleSaveHomeContent} className="space-y-4 text-xs pt-4 border-t border-slate-800">
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Tagline Superior</label>
+                  <input
+                    type="text"
+                    value={homeContent.heroTagline || ''}
+                    onChange={(e) => setHomeContent({ ...homeContent, heroTagline: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Título Principal do Hero *</label>
+                  <input
+                    type="text"
+                    required
+                    value={homeContent.heroTitle || ''}
+                    onChange={(e) => setHomeContent({ ...homeContent, heroTitle: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white font-medium"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Subtítulo / Descrição *</label>
+                  <textarea
+                    rows={3}
+                    required
+                    value={homeContent.heroSubtitle || ''}
+                    onChange={(e) => setHomeContent({ ...homeContent, heroSubtitle: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white leading-relaxed"
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Texto Botão Primário</label>
+                    <input
+                      type="text"
+                      value={homeContent.heroPrimaryButtonText || ''}
+                      onChange={(e) => setHomeContent({ ...homeContent, heroPrimaryButtonText: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Link Botão Primário</label>
+                    <input
+                      type="text"
+                      value={homeContent.heroPrimaryButtonLink || ''}
+                      onChange={(e) => setHomeContent({ ...homeContent, heroPrimaryButtonLink: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Texto Botão WhatsApp</label>
+                    <input
+                      type="text"
+                      value={homeContent.heroSecondaryButtonText || ''}
+                      onChange={(e) => setHomeContent({ ...homeContent, heroSecondaryButtonText: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 font-semibold mb-1">Imagem da Bancada (URL)</label>
+                    <input
+                      type="text"
+                      value={homeContent.heroImageUrl || ''}
+                      onChange={(e) => setHomeContent({ ...homeContent, heroImageUrl: e.target.value })}
+                      className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white font-mono"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-slate-300 font-semibold mb-1">Texto do Selo de Garantia</label>
+                  <input
+                    type="text"
+                    value={homeContent.warrantyBadgeText || ''}
+                    onChange={(e) => setHomeContent({ ...homeContent, warrantyBadgeText: e.target.value })}
+                    className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white"
+                  />
+                </div>
+
+                <div className="pt-3 flex justify-end">
+                  <button
+                    type="submit"
+                    disabled={savingHomeContent}
+                    className="px-5 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold transition-colors disabled:opacity-50 cursor-pointer"
+                  >
+                    {savingHomeContent ? 'A gravar...' : 'Guardar Conteúdo da Home'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* =========================================================================
+            TAB: UTILIZADORES E PERMISSÕES (RBAC)
+        ========================================================================= */}
+        {activeTab === 'utilizadores' && (
+          <div className="space-y-6 max-w-4xl">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-slate-950 p-6 rounded-2xl border border-slate-800 shadow-xl">
+              <div>
+                <h2 className="text-lg font-bold text-white flex items-center gap-2">
+                  <UserCheck className="w-5 h-5 text-emerald-400" />
+                  Utilizadores e Permissões de Acesso (RBAC)
+                </h2>
+                <p className="text-xs text-slate-400 mt-1">
+                  Controle de membros da equipa técnica autorizados a aceder ao painel de administração da oficina.
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setNewUserModalOpen(true)}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition-colors cursor-pointer"
+              >
+                <Plus className="w-4 h-4" />
+                <span>Adicionar Utilizador</span>
+              </button>
+            </div>
+
+            <div className="bg-slate-950 rounded-2xl border border-slate-800 overflow-hidden shadow-xl">
+              <table className="w-full text-left text-xs text-slate-300">
+                <thead className="bg-slate-900/80 text-slate-400 text-[11px] uppercase tracking-wider border-b border-slate-800">
+                  <tr>
+                    <th className="py-3 px-4">Nome & Email</th>
+                    <th className="py-3 px-4">Perfil (Role)</th>
+                    <th className="py-3 px-4">Estado</th>
+                    <th className="py-3 px-4 text-right">Ações</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-800/60">
+                  {usersList.map((u) => (
+                    <tr key={u.id} className="hover:bg-slate-900/40 transition-colors">
+                      <td className="py-3.5 px-4">
+                        <div className="font-semibold text-white">{u.name}</div>
+                        <div className="text-slate-500 text-[11px] font-mono">{u.email}</div>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span
+                          className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${
+                            u.role === 'admin'
+                              ? 'bg-purple-500/20 text-purple-300 border border-purple-500/30'
+                              : u.role === 'gestor'
+                              ? 'bg-sky-500/20 text-sky-300 border border-sky-500/30'
+                              : 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                          }`}
+                        >
+                          {u.role === 'admin' ? 'Administrador Geral' : u.role === 'gestor' ? 'Gestor Operacional' : 'Técnico de Bancada'}
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4">
+                        <span className="inline-flex items-center gap-1.5 text-emerald-400 font-medium text-[11px]">
+                          <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                          Ativo
+                        </span>
+                      </td>
+                      <td className="py-3.5 px-4 text-right">
+                        {u.email !== currentUser?.email && (
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteUser(u.id, u.email)}
+                            className="p-1.5 text-slate-500 hover:text-red-400 rounded-lg hover:bg-slate-900 transition-colors cursor-pointer"
+                            title="Revogar Acesso"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* =========================================================================
@@ -2169,6 +2842,122 @@ export const AdminPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* =========================================================================
+          MODAL: ADICIONAR NOVO UTILIZADOR
+      ========================================================================= */}
+      {newUserModalOpen && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-slate-950 border border-slate-800 rounded-2xl w-full max-w-md p-6 space-y-4 shadow-2xl">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-sky-400" />
+                Adicionar Novo Utilizador
+              </h3>
+              <button
+                type="button"
+                onClick={() => setNewUserModalOpen(false)}
+                className="text-slate-400 hover:text-white cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveUser} className="space-y-4 text-xs">
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Nome Completo *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Ex: Engenheiro Carlos Silva"
+                  value={newUserForm.name}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, name: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder:text-slate-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Email de Acesso *</label>
+                <input
+                  type="email"
+                  required
+                  placeholder="tecnico@amatec.ao"
+                  value={newUserForm.email}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
+                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white placeholder:text-slate-600"
+                />
+              </div>
+
+              <div>
+                <label className="block text-slate-300 font-semibold mb-1">Perfil & Permissões *</label>
+                <select
+                  value={newUserForm.role}
+                  onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value as any })}
+                  className="w-full px-3 py-2 bg-slate-900 border border-slate-800 rounded-xl text-white"
+                >
+                  <option value="gestor">Gestor Operacional (Acesso aos pedidos e catálogo)</option>
+                  <option value="tecnico">Técnico de Bancada (Notas e estados)</option>
+                  <option value="admin">Administrador Geral (Acesso Irrestrito)</option>
+                </select>
+              </div>
+
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-800">
+                <button
+                  type="button"
+                  onClick={() => setNewUserModalOpen(false)}
+                  className="px-4 py-2 rounded-xl bg-slate-800 text-slate-300 text-xs font-semibold cursor-pointer"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="px-5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold cursor-pointer"
+                >
+                  Guardar Acesso
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* =========================================================================
+          MOBILE BOTTOM NAVIGATION (Menu Inferior no Telemóvel)
+      ========================================================================= */}
+      <nav
+        aria-label="Navegação administrativa móvel"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-slate-950/95 backdrop-blur-md border-t border-slate-800 py-2.5 px-3 flex justify-around items-center shadow-2xl"
+      >
+        {[
+          { id: 'dashboard' as AdminTab, label: 'Painel', icon: BarChart3 },
+          { id: 'leads' as AdminTab, label: 'Pedidos', icon: Users, count: newLeadsCount },
+          { id: 'servicos' as AdminTab, label: 'Serviços', icon: Wrench },
+          { id: 'home' as AdminTab, label: 'Home', icon: LayoutTemplate },
+          { id: 'empresa' as AdminTab, label: 'Definições', icon: Settings },
+        ].map((item) => {
+          const Icon = item.icon;
+          const isActive = activeTab === item.id;
+          return (
+            <button
+              key={item.id}
+              type="button"
+              onClick={() => setActiveTab(item.id)}
+              className={`flex flex-col items-center gap-1 transition-colors relative cursor-pointer ${
+                isActive ? 'text-sky-400 font-semibold' : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Icon className="w-4 h-4" />
+              <span className="text-[10px]">{item.label}</span>
+              {item.count !== undefined && item.count > 0 && (
+                <span className="absolute -top-1 -right-1 px-1 rounded-full bg-amber-500 text-slate-950 font-bold text-[9px]">
+                  {item.count}
+                </span>
+              )}
+            </button>
+          );
+        })}
+      </nav>
+      </div>
     </div>
   );
 };

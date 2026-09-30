@@ -122,7 +122,7 @@ export async function processLeadSubmission(payload: LeadPayload, clientIp: stri
   const sEmail = email ? sanitizeHtml(email) : 'Não fornecido';
   const sEquipment = sanitizeHtml(equipment);
   const sProblem = sanitizeHtml(problem);
-  const sLocation = location ? sanitizeHtml(location) : 'Golf 2 / Luanda (a detalhar)';
+  const sLocation = location ? sanitizeHtml(location) : 'Não especificada';
   const sCategory = sanitizeHtml(serviceCategory || 'Geral');
   const sUtm = utmSource ? `Fonte: ${sanitizeHtml(utmSource)} | Campanha: ${sanitizeHtml(utmCampaign || 'direta')}` : 'Acesso direto';
   const sDate = new Date().toLocaleString('pt-PT', { timeZone: 'Africa/Luanda' });
@@ -138,7 +138,7 @@ export async function processLeadSubmission(payload: LeadPayload, clientIp: stri
     equipment,
     serviceCategory: serviceCategory || 'domestico',
     problemDescription: problem,
-    location: location || 'Golf 2 / Luanda (a detalhar)',
+    location: location || 'Não especificada',
     message: message || undefined,
     utmSource: utmSource || undefined,
     utmCampaign: utmCampaign || undefined,

@@ -6,8 +6,10 @@ export interface FormDataFields {
   serviceCategory?: string;
   problemDescription: string;
   location?: string;
+  scheduledDate?: string;
   message?: string;
   honeypot?: string;
+  privacyConsent?: boolean;
 }
 
 export interface ValidationErrors {
@@ -19,6 +21,7 @@ export interface ValidationErrors {
   problemDescription?: string;
   location?: string;
   honeypot?: string;
+  privacyConsent?: string;
   general?: string;
 }
 
@@ -83,9 +86,13 @@ export function validateAssistanceForm(data: FormDataFields): {
     errors.location = 'A localização não deve exceder 150 caracteres.';
   }
 
+  // Consentimento de Privacidade (obrigatório para tratamento de dados)
+  if (data.privacyConsent === false) {
+    errors.privacyConsent = 'É necessário concordar com os termos da Política de Privacidade para submeter.';
+  }
+
   return {
     isValid: Object.keys(errors).length === 0,
     errors,
   };
 }
-

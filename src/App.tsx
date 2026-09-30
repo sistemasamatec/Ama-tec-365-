@@ -161,6 +161,7 @@ function MainAppContent() {
                 path="/solicitar-assistencia"
                 element={<RequestAssistancePage />}
               />
+              <Route path="/agendar" element={<RequestAssistancePage />} />
               <Route path="/privacidade" element={<PrivacyPage />} />
               <Route path="/cookies" element={<CookiesPage />} />
               <Route path="/admin" element={<AdminPage />} />
@@ -172,10 +173,8 @@ function MainAppContent() {
         {/* Rodapé Oficial com Razão Social e NAP */}
         <Footer onOpenDatabaseManager={() => setIsDbModalOpen(true)} />
 
-        {/* Botão Flutuante Global do WhatsApp no Desktop */}
-        <div className="hidden md:block">
-          <WhatsAppFloating />
-        </div>
+        {/* Botão Flutuante Global do WhatsApp (56px com balão inteligente e margem segura) */}
+        <WhatsAppFloating />
 
         {/* Barra de Ações Fixa no Mobile (Ligar + WhatsApp + Solicitar) */}
         <MobileActionBar />

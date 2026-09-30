@@ -26,10 +26,16 @@ import {
   createFullBackup,
   listBackups,
   getBackupContent,
+  getHomeContentFromDb,
+  saveHomeContentToDb,
+  getAdminUsersFromDb,
+  saveAdminUserToDb,
+  deleteAdminUserFromDb,
   AdminSession,
 } from '../src/lib/server-storage';
 import { getVercelDeployStatus, triggerVercelRebuild } from '../src/lib/vercel-deploy';
 import { getDatabaseEngineType } from '../src/lib/serverless-db';
+import { getErpFirestoreDb } from '../src/lib/erp-firebase';
 
 /* Helper para envio de respostas JSON padronizadas */
 function sendJson(res: ServerResponse, statusCode: number, data: any) {
@@ -269,11 +275,52 @@ export default async function adminApiHandler(
     }
   }
 
-  // 9. GESTÃO DE LEADS (PEDIDOS)
+  // 9. GESTÃO DE LEADS E PEDIDOS (BOOKINGS DO FIRESTORE & LOCAL)
   if (pathname === '/api/admin/leads') {
     if (method === 'GET') {
-      const leads = getAllLeadsFromServer();
-      return sendJson(res, 200, leads);
+      const localLeads = getAllLeadsFromServer();
+      let firestoreBookings: any[] = [];
+      try {
+        const erpDb = getErpFirestoreDb();
+        const snap = await erpDb.collection('bookings').orderBy('createdAt', 'desc').limit(200).get();
+        firestoreBookings = snap.docs.map((doc) => {
+          const d = doc.data();
+          return {
+            id: doc.id,
+            bookingNumber: d.bookingNumber || doc.id,
+            name: d.clientName || d.name || 'Cliente',
+            phone: d.clientPhone || d.phone || '',
+            whatsapp: d.clientWhatsapp || d.clientPhone || d.phone || '',
+            email: d.clientEmail || d.email || '',
+            equipment: d.deviceType || d.equipment || '',
+            deviceBrand: d.deviceBrand || d.brand || '',
+            deviceModel: d.deviceModel || d.model || '',
+            serviceCategory: d.serviceType || 'Reparação',
+            problemDescription: d.deviceProblem || d.description || '',
+            location: d.address || d.location || '',
+            locationType: d.locationType || 'residence',
+            scheduledDate: d.scheduledDate || null,
+            status: d.status || 'pendente',
+            notes: d.notes || '',
+            createdAt: d.createdAt || new Date().toISOString(),
+            source: d.source || 'site',
+            channel: d.channel || 'site',
+          };
+        });
+      } catch (err) {
+        console.warn('[Admin API] Falha ao consultar coleção bookings do Firestore:', err);
+      }
+
+      // Combina com deduplicação por id
+      const combined = [...firestoreBookings];
+      const seenIds = new Set(combined.map((b) => b.id));
+      for (const l of localLeads) {
+        if (!seenIds.has(l.id)) {
+          combined.push(l);
+        }
+      }
+
+      return sendJson(res, 200, combined);
     }
   }
 
@@ -293,16 +340,79 @@ export default async function adminApiHandler(
     if (method === 'PATCH') {
       try {
         const body = await readBody(req);
-        const updated = updateLeadStatusOnServer(id, body.status, body.notes);
-        return sendJson(res, updated ? 200 : 404, { success: updated });
+        // Atualiza tanto no Firestore do ERP como no armazenamento local
+        let firestoreOk = false;
+        try {
+          const erpDb = getErpFirestoreDb();
+          await erpDb.collection('bookings').doc(id).set(
+            {
+              status: body.status,
+              notes: body.notes !== undefined ? body.notes : '',
+              updatedAt: new Date().toISOString(),
+            },
+            { merge: true }
+          );
+          firestoreOk = true;
+        } catch (err) {
+          console.warn('[Admin API] Atualização no Firestore bookings falhou:', err);
+        }
+
+        const localUpdated = updateLeadStatusOnServer(id, body.status, body.notes);
+        return sendJson(res, firestoreOk || localUpdated ? 200 : 404, { success: firestoreOk || localUpdated });
       } catch {
         return sendJson(res, 400, { error: 'Erro ao atualizar pedido.' });
       }
     }
     if (method === 'DELETE') {
+      try {
+        const erpDb = getErpFirestoreDb();
+        await erpDb.collection('bookings').doc(id).delete().catch(() => {});
+      } catch {}
       const deleted = deleteLeadFromServer(id);
-      return sendJson(res, deleted ? 200 : 404, { success: deleted });
+      return sendJson(res, 200, { success: true });
     }
+  }
+
+  // 9.1 GESTÃO DO HERO E CONTEÚDO DA HOME
+  if (pathname === '/api/admin/home-content') {
+    if (method === 'GET') {
+      return sendJson(res, 200, getHomeContentFromDb());
+    }
+    if (method === 'PUT') {
+      try {
+        const body = await readBody(req);
+        const updated = saveHomeContentToDb(body, session.email);
+        triggerVercelRebuild('Conteúdo da Home atualizado').catch(() => {});
+        return sendJson(res, 200, updated);
+      } catch {
+        return sendJson(res, 400, { error: 'Erro ao guardar conteúdo da Home.' });
+      }
+    }
+  }
+
+  // 9.2 GESTÃO DE UTILIZADORES E PERMISSÕES (ADMIN, GESTOR, TÉCNICO)
+  if (pathname === '/api/admin/users') {
+    if (method === 'GET') {
+      return sendJson(res, 200, getAdminUsersFromDb());
+    }
+    if (method === 'POST') {
+      try {
+        const body = await readBody(req);
+        if (!body.name || !body.email || !body.role) {
+          return sendJson(res, 400, { error: 'Nome, email e perfil (role) são obrigatórios.' });
+        }
+        const saved = saveAdminUserToDb(body, session.email);
+        return sendJson(res, 201, saved);
+      } catch {
+        return sendJson(res, 400, { error: 'Erro ao guardar utilizador.' });
+      }
+    }
+  }
+
+  if (pathname.startsWith('/api/admin/users/') && method === 'DELETE') {
+    const id = pathname.replace('/api/admin/users/', '');
+    const deleted = deleteAdminUserFromDb(id, session.email);
+    return sendJson(res, deleted ? 200 : 404, { success: deleted });
   }
 
   // 10. GESTÃO DE EQUIPAMENTOS

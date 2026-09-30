@@ -14,7 +14,6 @@ import {
   PlusCircle,
   X,
 } from 'lucide-react';
-import { TodoNotice } from '../ui/TodoNotice';
 import { track } from '../../lib/analytics';
 
 export interface TestimonialItem {
@@ -83,27 +82,13 @@ export const CustomerTestimonials: React.FC = () => {
     story: '',
   });
 
-  // Se não houver depoimentos reais, respeitar a regra: oculta em produção e TODO_CONTEUDO em dev
-  if (testimonials.length === 0) {
-    const isDev =
-      typeof process !== 'undefined'
-        ? process.env.NODE_ENV !== 'production'
-        : Boolean((import.meta as any)?.env?.DEV);
-
-    if (isDev) {
-      return (
-        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <TodoNotice
-            type="info"
-            label="TODO_CONTEUDO: Prova social (Secção oculta em produção enquanto não existirem 3 depoimentos reais autorizados por clientes da Ama Tec)."
-          />
-        </section>
-      );
-    }
+  // A secção de depoimentos só renderiza na UI pública com >= 3 depoimentos aprovados
+  const approvedTestimonials = testimonials.filter((t) => t.approved !== false);
+  if (approvedTestimonials.length < 3) {
     return null;
   }
 
-  const filtered = testimonials.filter((t) => {
+  const filtered = approvedTestimonials.filter((t) => {
     if (activeFilter === 'todos') return true;
     return t.clientType === activeFilter;
   });
@@ -193,12 +178,6 @@ export const CustomerTestimonials: React.FC = () => {
           </button>
         </div>
       </div>
-
-      {/* Strict Transparency Notice */}
-      <TodoNotice
-        type="info"
-        label="Compromisso de Veracidade Ama Tec: As avaliações apresentadas baseiam-se em ordens de serviço (OS) reais arquivadas na oficina no Golf 2. A Ama Tec não utiliza métricas nem depoimentos forjados."
-      />
 
       {/* Filter Tabs */}
       <div className="flex items-center gap-2 border-b border-slate-200 pb-3">

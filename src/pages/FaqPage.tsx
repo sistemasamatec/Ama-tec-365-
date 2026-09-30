@@ -37,9 +37,9 @@ const FAQ_DATA: FAQCategory[] = [
     icon: ShieldCheck,
     items: [
       {
-        question: 'As reparações da Ama Tec têm garantia por escrito?',
+        question: 'As reparações da Ama Tec têm acompanhamento técnico?',
         answer:
-          'Sim. Todas as intervenções técnicas efetuadas pela Ama Tec são acompanhadas por comprovativo escrito de garantia oficial de 90 dias sobre os componentes substituídos e a mão-de-obra executada.',
+          'Sim. Todas as intervenções técnicas efetuadas pela Ama Tec incluem relatório técnico descritivo, ensaio funcional em bancada e suporte direto da equipa especializada.',
       },
       {
         question: 'As peças utilizadas são originais ou compatíveis de alta qualidade?',
@@ -89,7 +89,7 @@ export const FaqPage: React.FC = () => {
     updateDocumentSeo({
       title: 'Perguntas Frequentes (FAQ) | Ama Tec Luanda',
       description:
-        'Respostas a dúvidas comuns sobre prazos médios de diagnóstico, garantia oficial de 90 dias por escrito, formas de pagamento aceites e localização da oficina no Golf 2.',
+        'Respostas a dúvidas comuns sobre prazos médios de diagnóstico, testes em bancada especializada, formas de pagamento aceites e localização da oficina no Golf 2.',
       canonicalPath: '/faq',
     });
   }, []);

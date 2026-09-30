@@ -148,60 +148,90 @@ export const ServicesPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredServices.map((service) => (
-            <div
-              key={service.id}
-              className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-lg transition-all flex flex-col justify-between"
-            >
-              <div className="p-6 space-y-4">
-                <div className="flex items-center justify-between text-xs text-slate-500">
-                  <span className="font-semibold text-sky-600">{service.categoryName}</span>
-                  <span className="text-slate-400 font-mono">Bancada Luanda</span>
+          {filteredServices.map((service) => {
+            const catConfig = CATEGORIES_CONFIG.find((c) => c.id === service.category);
+            const cardImg =
+              service.imageUrl ||
+              (service.category === 'domestico'
+                ? '/images/service-appliances.jpg'
+                : '/images/service-electronics.jpg');
+
+            return (
+              <div
+                key={service.id}
+                className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
+              >
+                {/* Imagem do Card (Proporção 4:3) com Overlay Navy->Transparente e Ícone */}
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-950">
+                  <img
+                    src={cardImg}
+                    alt={service.imageAlt || service.name}
+                    loading="lazy"
+                    width="400"
+                    height="300"
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent pointer-events-none" />
+
+                  {/* Ícone e Nome da Categoria no Topo */}
+                  <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-slate-900/90 backdrop-blur-xs text-white text-[11px] font-semibold border border-slate-700/60 flex items-center gap-1.5 shadow-sm">
+                    <span>{catConfig?.icon || '🔧'}</span>
+                    <span>{service.categoryName}</span>
+                  </div>
                 </div>
 
-                <h2 className="text-xl font-bold text-slate-900 leading-snug">
-                  {service.name}
-                </h2>
+                <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between text-xs text-slate-500">
+                      <span className="font-semibold text-sky-600">{service.categoryName}</span>
+                      <span className="text-slate-400 font-mono">Bancada Luanda</span>
+                    </div>
 
-                <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                  {service.shortDescription}
-                </p>
+                    <h2 className="text-xl font-bold text-slate-900 leading-snug group-hover:text-sky-600 transition-colors">
+                      {service.name}
+                    </h2>
 
-                {/* Covered Equipment list */}
-                <div className="pt-2">
-                  <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider block mb-1">
-                    Equipamentos abrangidos:
-                  </span>
-                  <ul className="text-xs text-slate-600 space-y-1">
-                    {service.coveredEquipment.map((eq, i) => (
-                      <li key={i} className="flex items-center gap-1.5">
-                        <span className="text-sky-500">·</span>
-                        <span>{eq}</span>
-                      </li>
-                    ))}
-                  </ul>
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                      {service.shortDescription}
+                    </p>
+
+                    {/* Covered Equipment list */}
+                    <div className="pt-1">
+                      <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider block mb-1">
+                        Equipamentos abrangidos:
+                      </span>
+                      <ul className="text-xs text-slate-600 space-y-1">
+                        {service.coveredEquipment.slice(0, 3).map((eq, i) => (
+                          <li key={i} className="flex items-center gap-1.5 truncate">
+                            <span className="text-sky-500">·</span>
+                            <span className="truncate">{eq}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+
+                  {/* Card Footer Actions */}
+                  <div className="pt-4 mt-2 border-t border-slate-100 flex items-center justify-between text-xs">
+                    <Link
+                      to={`/servicos/${service.slug}`}
+                      className="font-semibold text-sky-600 hover:text-sky-800 flex items-center gap-1"
+                    >
+                      <span>Detalhes completos</span>
+                      <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
+
+                    <Link
+                      to={`/solicitar-assistencia?servico=${service.slug}`}
+                      className="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium transition-colors shadow-2xs"
+                    >
+                      Pedir
+                    </Link>
+                  </div>
                 </div>
               </div>
-
-              {/* Card Footer Actions */}
-              <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
-                <Link
-                  to={`/servicos/${service.slug}`}
-                  className="font-semibold text-sky-600 hover:text-sky-800 flex items-center gap-1"
-                >
-                  <span>Página completa do serviço</span>
-                  <ArrowRight className="w-3.5 h-3.5" />
-                </Link>
-
-                <Link
-                  to={`/solicitar-assistencia?servico=${service.slug}`}
-                  className="px-3.5 py-1.5 rounded-lg bg-sky-600 hover:bg-sky-500 text-white font-medium transition-colors shadow-2xs"
-                >
-                  Pedir
-                </Link>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

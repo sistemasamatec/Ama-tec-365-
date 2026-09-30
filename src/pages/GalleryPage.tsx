@@ -165,14 +165,14 @@ export const GalleryPage: React.FC = () => {
                   <span className="font-mono text-[11px]">Bancada Ama Tec</span>
                 </div>
 
-                {/* Photo box with compliance notice */}
-                <div className="bg-slate-100 rounded-xl p-4 flex flex-col items-center justify-center min-h-[160px] text-center border border-dashed border-slate-300 group-hover:border-sky-300 transition-colors">
+                {/* Registo fotográfico de bancada */}
+                <div className="bg-slate-100/80 rounded-xl p-4 flex flex-col items-center justify-center min-h-[160px] text-center border border-dashed border-slate-300 group-hover:border-sky-300 transition-colors">
                   <Camera className="w-8 h-8 text-slate-400 mb-2 group-hover:text-sky-500 transition-colors" />
-                  <span className="text-[11px] font-bold text-amber-800 uppercase tracking-wider block">
-                    TODO_CONTEUDO
+                  <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider block">
+                    Registo Fotográfico de Bancada
                   </span>
-                  <span className="text-xs text-slate-600 max-w-xs">
-                    {item.photoUrl}
+                  <span className="text-xs text-slate-500 max-w-xs mt-1">
+                    {item.equipment} · {item.title}
                   </span>
                 </div>
 

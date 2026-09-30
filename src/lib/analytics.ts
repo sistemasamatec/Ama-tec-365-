@@ -15,7 +15,18 @@ export type AnalyticsEventType =
   | 'equipment_open'
   | 'search'
   | 'filter'
-  | 'conversion';
+  | 'conversion'
+  | 'client_portal_topbar_click'
+  | 'client_portal_mobile_click'
+  | 'client_portal_footer_click'
+  | 'client_portal_from_form_success'
+  | 'os_lookup_topbar_click'
+  | 'os_lookup_mobile_click'
+  | 'os_lookup_footer_click'
+  | 'os_lookup_attempt'
+  | 'os_lookup_success'
+  | 'os_lookup_error'
+  | 'os_lookup_from_form_success';
 
 
 interface AnalyticsPayload {

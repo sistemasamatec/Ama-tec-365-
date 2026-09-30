@@ -1,15 +1,60 @@
 @import "tailwindcss";
 
+@theme {
+  --color-navy-950: #060B16;
+  --color-navy-900: #0B1220;
+  --color-navy-800: #111B2E;
+  --color-navy-700: #1B2A44;
+
+  --color-cyan-100: #E0F2FE;
+  --color-cyan-500: #0EA5E9;
+  --color-cyan-600: #0284C7;
+
+  --color-verde-600: #059669;
+  --color-verde-500: #10B981;
+
+  --color-surface-white: #FFFFFF;
+  --color-surface-alt: #F4F7FA;
+
+  --color-text-main: #0F172A;
+  --color-text-muted: #475569;
+  --color-text-navy: #E6EDF7;
+  --color-border-subtle: #E2E8F0;
+
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-heading: 'Manrope', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  --radius-btn: 10px;
+  --radius-card: 14px;
+  --radius-img: 12px;
+
+  --shadow-hover-card: 0 16px 40px rgba(2, 132, 199, 0.16);
+}
+
 @layer base {
   html {
     scroll-behavior: smooth;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: var(--font-sans);
+    color: var(--color-text-main);
+    background-color: var(--color-surface-white);
+    font-size: 16px;
   }
 
-  /* Prevenção de scroll horizontal indesejado em telemóveis */
   body {
     overflow-x: hidden;
     width: 100%;
+    color: var(--color-text-main);
+    background-color: var(--color-surface-white);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+  }
+
+  /* Previne texto abaixo de 14px no site para conformidade WCAG AA */
+  p, span, label, input, select, textarea, button, a {
+    font-size: max(14px, 1em);
   }
 
   /* Respeito por preferências de acessibilidade de movimento reduzido */
@@ -20,6 +65,126 @@
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
     }
+  }
+}
+
+/* Tokens de botões e cartões uniformizados */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-btn);
+  background-color: var(--color-cyan-600);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.25;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn-primary:hover {
+  background-color: var(--color-cyan-500);
+}
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--color-cyan-500);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-btn);
+  background-color: transparent;
+  color: var(--color-text-main);
+  border: 1.5px solid var(--color-border-subtle);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.25;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+.btn-outline:hover {
+  background-color: var(--color-surface-alt);
+  border-color: var(--color-cyan-600);
+  color: var(--color-cyan-600);
+}
+.btn-outline:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--color-cyan-500);
+}
+
+.btn-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-btn);
+  background-color: var(--color-verde-600);
+  color: #FFFFFF;
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.25;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn-whatsapp:hover {
+  background-color: var(--color-verde-500);
+}
+.btn-whatsapp:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--color-verde-500);
+}
+
+.card-base {
+  background-color: var(--color-surface-white);
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-card);
+  transition: all 0.25s ease-in-out;
+}
+.card-base:hover {
+  box-shadow: var(--shadow-hover-card);
+  border-color: #BAE6FD;
+}
+
+.app-container {
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+@media (min-width: 640px) {
+  .app-container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+@media (min-width: 1024px) {
+  .app-container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+.section-padding {
+  padding-top: 64px;
+  padding-bottom: 64px;
+}
+@media (min-width: 1024px) {
+  .section-padding {
+    padding-top: 96px;
+    padding-bottom: 96px;
   }
 }
 

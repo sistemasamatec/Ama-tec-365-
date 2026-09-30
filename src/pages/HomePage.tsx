@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { motion, useReducedMotion } from 'motion/react';
 import {
   Wrench,
   ShieldCheck,
@@ -25,6 +26,8 @@ import { CustomerTestimonials } from '../components/testimonials/CustomerTestimo
 import { track } from '../lib/analytics';
 
 export const HomePage: React.FC = () => {
+  const prefersReducedMotion = useReducedMotion();
+
   useEffect(() => {
     updateDocumentSeo({
       title: 'Ama Tec — Assistência Técnica de Equipamentos Eletrónicos em Luanda',
@@ -59,7 +62,12 @@ export const HomePage: React.FC = () => {
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Content */}
-            <div className="lg:col-span-7 space-y-6">
+            <motion.div
+              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="lg:col-span-7 space-y-6"
+            >
               <div className="flex items-center gap-2 text-xs text-sky-400 font-semibold tracking-wider uppercase">
                 <span className="w-2 h-2 rounded-full bg-sky-400"></span>
                 <span>Assistência Técnica Oficial em Luanda</span>
@@ -115,81 +123,138 @@ export const HomePage: React.FC = () => {
                   <span>Diagnóstico Técnico Transparente</span>
                 </div>
               </div>
-            </div>
+            </motion.div>
 
-            {/* Right Card: Quick Assist / Featured Card */}
-            <div className="lg:col-span-5">
-              <div className="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 sm:p-8 backdrop-blur shadow-2xl relative">
-                <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                  <div className="flex items-center gap-2">
-                    <img
-                      src="/brand/logo-symbol.svg"
-                      alt="Ama Tec"
-                      className="w-7 h-7"
-                    />
-                    <span className="font-bold text-white text-sm">Oficina Ama Tec</span>
+            {/* Right: Technical Workbench Composition + Animated Warranty Seal */}
+            <motion.div
+              initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.96 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.5, delay: 0.15 }}
+              className="lg:col-span-5 relative"
+            >
+              <div className="relative rounded-3xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-900 group">
+                <div className="aspect-[4/3] w-full overflow-hidden relative bg-slate-950">
+                  <img
+                    src="/images/hero-workbench.jpg"
+                    alt="Bancada Técnica Oficial Ama Tec com equipamento de diagnóstico eletrónico"
+                    loading="eager"
+                    width="600"
+                    height="450"
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/25 to-transparent pointer-events-none" />
+
+                  {/* Top Technical Status Badge */}
+                  <div className="absolute top-4 left-4 px-3 py-1.5 rounded-xl bg-slate-900/90 backdrop-blur-md text-white text-xs font-semibold border border-slate-700/70 flex items-center gap-2 shadow-lg">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>Bancada Técnica Ativa · Golf 2</span>
                   </div>
-                  <span className="text-xs text-emerald-400 font-medium flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    Atendimento Ativo
-                  </span>
+
+                  {/* Micro-chip inspection tag */}
+                  <div className="absolute top-4 right-4 px-2.5 py-1 rounded-lg bg-sky-950/80 backdrop-blur-xs text-sky-300 text-[11px] font-mono border border-sky-800/60">
+                    SMD & Micro-soldadura
+                  </div>
                 </div>
 
-                <div className="py-5 space-y-4">
-                  <h3 className="text-lg font-bold text-white">
-                    Equipamentos Mais Atendidos
-                  </h3>
-
-                  <ul className="space-y-3 text-xs text-slate-300">
-                    <li className="flex items-start gap-2.5">
-                      <Tv className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-white">Smart TVs LED e OLED:</strong> Troca de réguas LED e reparação de fontes de alimentação comutadas.
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2.5">
-                      <Wrench className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-white">Máquinas de Lavar e Secar:</strong> Desbloqueio de bombas, substituição de rolamentos e reprogramação de placas.
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2.5">
-                      <Flame className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-white">Air Fryers e Micro-ondas:</strong> Testes térmicos, magnetrões e substituição de fusíveis térmicos calibrados.
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2.5">
-                      <UtensilsCrossed className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
-                      <div>
-                        <strong className="text-white">Cozinhas e Comércio:</strong> Fornos convector, fritadeiras industriais trifásicas e balanças POS.
-                      </div>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row gap-2">
-                  <Link
-                    to="/servicos"
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-sky-300 text-xs font-semibold uppercase tracking-wider transition-colors"
-                  >
-                    <span>Explorar Catálogo</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                  <Link
-                    to="/servicos#simulador-orcamento"
-                    className="flex items-center justify-center gap-1.5 py-3 px-3.5 rounded-xl bg-sky-600/20 hover:bg-sky-600/30 text-sky-300 border border-sky-500/30 text-xs font-semibold transition-colors"
-                  >
-                    <span>Simular Preço</span>
-                  </Link>
+                {/* Bottom Workbench Details Panel */}
+                <div className="p-5 bg-slate-950/95 border-t border-slate-800/80 space-y-3">
+                  <div className="flex items-center justify-between text-xs">
+                    <span className="text-slate-400 font-medium">Capacidade Operacional</span>
+                    <span className="text-emerald-400 font-semibold font-mono">100% Operacional</span>
+                  </div>
+                  
+                  {/* Equipment Mini Badges */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 pt-1 text-[11px] text-slate-300 text-center font-medium">
+                    <div className="bg-slate-900/90 rounded-lg py-1.5 px-2 border border-slate-800">
+                      Smart TVs
+                    </div>
+                    <div className="bg-slate-900/90 rounded-lg py-1.5 px-2 border border-slate-800">
+                      Lavar & Secar
+                    </div>
+                    <div className="bg-slate-900/90 rounded-lg py-1.5 px-2 border border-slate-800">
+                      Air Fryer / Micro
+                    </div>
+                    <div className="bg-slate-900/90 rounded-lg py-1.5 px-2 border border-slate-800">
+                      Industrial / POS
+                    </div>
+                  </div>
                 </div>
               </div>
+
+              {/* Floating Animated Warranty Seal */}
+              <motion.div
+                animate={prefersReducedMotion ? {} : { y: [0, -6, 0] }}
+                transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+                className="absolute -bottom-6 -left-4 sm:-left-6 z-20 bg-gradient-to-br from-sky-600 to-sky-800 text-white p-3.5 sm:p-4 rounded-2xl shadow-xl shadow-sky-950/60 border border-sky-400/40 flex items-center gap-3"
+              >
+                <div className="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-xs flex items-center justify-center shrink-0 border border-white/20">
+                  <ShieldCheck className="w-6 h-6 text-emerald-300" />
+                </div>
+                <div>
+                  <div className="text-[11px] uppercase tracking-wider text-sky-200 font-bold">
+                    Garantia Certificada
+                  </div>
+                  <div className="text-sm font-black tracking-tight text-white">
+                    Peças & Mão-de-Obra
+                  </div>
+                </div>
+              </motion.div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* NÚMEROS E CAPACIDADE TÉCNICA (Com micro-interações) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="bg-slate-900 rounded-3xl p-8 sm:p-10 border border-slate-800 shadow-xl grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+          <div className="space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">
+              +3.200
+            </div>
+            <div className="text-xs sm:text-sm text-sky-400 font-semibold">
+              Equipamentos Reparados
+            </div>
+            <div className="text-[11px] text-slate-400">
+              Triagem e diagnóstico rigoroso
+            </div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 font-mono tracking-tight">
+              98%
+            </div>
+            <div className="text-xs sm:text-sm text-white font-semibold">
+              Taxa de Sucesso
+            </div>
+            <div className="text-[11px] text-slate-400">
+              Ao nível de componentes SMD
+            </div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-white font-mono tracking-tight">
+              6
+            </div>
+            <div className="text-xs sm:text-sm text-sky-400 font-semibold">
+              Categorias Técnicas
+            </div>
+            <div className="text-[11px] text-slate-400">
+              Doméstico, comercial e TV
+            </div>
+          </div>
+          <div className="space-y-1">
+            <div className="text-3xl sm:text-4xl font-extrabold text-amber-400 font-mono tracking-tight">
+              100%
+            </div>
+            <div className="text-xs sm:text-sm text-white font-semibold">
+              Garantia Técnica
+            </div>
+            <div className="text-[11px] text-slate-400">
+              Emitida em ordem de serviço
             </div>
           </div>
         </div>
       </section>
 
-      {/* AS 6 CATEGORIAS TÉCNICAS */}
+      {/* AS 6 CATEGORIAS TÉCNICAS (Entrada em cascata / stagger 60ms) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12 space-y-3">
           <div className="text-xs font-semibold text-sky-600 uppercase tracking-wider">
@@ -203,18 +268,37 @@ export const HomePage: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: '-50px' }}
+          variants={{
+            hidden: {},
+            visible: {
+              transition: {
+                staggerChildren: prefersReducedMotion ? 0 : 0.06,
+              },
+            },
+          }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        >
           {CATEGORIES_CONFIG.map((category) => (
-            <div
+            <motion.div
               key={category.id}
-              className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs hover:shadow-md hover:border-sky-300 transition-all flex flex-col justify-between"
+              variants={{
+                hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 16 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+              }}
+              className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-7 shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
             >
               <div className="space-y-4">
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <span className="font-semibold text-sky-700">{category.badge}</span>
                   <span className="font-mono text-slate-400">Ama Tec</span>
                 </div>
-                <h3 className="text-xl font-bold text-slate-900">{category.name}</h3>
+                <h3 className="text-xl font-bold text-slate-900 group-hover:text-sky-600 transition-colors">
+                  {category.name}
+                </h3>
                 <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
                   {category.description}
                 </p>
@@ -229,12 +313,12 @@ export const HomePage: React.FC = () => {
                   <ArrowRight className="w-3.5 h-3.5" />
                 </Link>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      {/* SERVIÇOS EM DESTAQUE (Com páginas dedicadas e rotas reais) */}
+      {/* SERVIÇOS EM DESTAQUE (Cards com imagens 4:3, overlay navy e stagger 60ms) */}
       <section className="bg-slate-50 py-16 sm:py-20 border-y border-slate-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
@@ -258,60 +342,107 @@ export const HomePage: React.FC = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredServices.map((service) => (
-              <div
-                key={service.id}
-                className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-lg transition-all flex flex-col justify-between group"
-              >
-                <div className="p-6 space-y-3">
-                  <div className="flex items-center justify-between text-xs text-slate-500">
-                    <span className="text-sky-600 font-medium">{service.categoryName}</span>
-                    <span className="font-mono text-slate-400">Oficina Luanda</span>
+          <motion.div
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, margin: '-50px' }}
+            variants={{
+              hidden: {},
+              visible: {
+                transition: {
+                  staggerChildren: prefersReducedMotion ? 0 : 0.06,
+                },
+              },
+            }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          >
+            {featuredServices.map((service) => {
+              const catConfig = CATEGORIES_CONFIG.find((c) => c.id === service.category);
+              const cardImg =
+                service.imageUrl ||
+                (service.category === 'domestico'
+                  ? '/images/service-appliances.jpg'
+                  : '/images/service-electronics.jpg');
+
+              return (
+                <motion.div
+                  key={service.id}
+                  variants={{
+                    hidden: { opacity: 0, y: prefersReducedMotion ? 0 : 16 },
+                    visible: { opacity: 1, y: 0, transition: { duration: 0.35 } },
+                  }}
+                  className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between group"
+                >
+                  {/* Imagem do Card (Proporção 4:3) com Overlay Navy->Transparente e Ícone */}
+                  <div className="relative aspect-[4/3] w-full overflow-hidden bg-slate-950">
+                    <img
+                      src={cardImg}
+                      alt={service.imageAlt || service.name}
+                      loading="lazy"
+                      width="400"
+                      height="300"
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-slate-950/25 to-transparent pointer-events-none" />
+
+                    {/* Ícone e Nome da Categoria no Topo */}
+                    <div className="absolute top-3 left-3 px-2.5 py-1 rounded-lg bg-slate-900/90 backdrop-blur-xs text-white text-[11px] font-semibold border border-slate-700/60 flex items-center gap-1.5 shadow-sm">
+                      <span>{catConfig?.icon || '🔧'}</span>
+                      <span>{service.categoryName}</span>
+                    </div>
                   </div>
 
-                  <h3 className="text-lg font-bold text-slate-900 group-hover:text-sky-600 transition-colors">
-                    {service.name}
-                  </h3>
+                  <div className="p-6 space-y-3 flex-1 flex flex-col justify-between">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between text-xs text-slate-500">
+                        <span className="text-sky-600 font-medium">{service.categoryName}</span>
+                        <span className="font-mono text-slate-400">Oficina Luanda</span>
+                      </div>
 
-                  <p className="text-xs text-slate-600 leading-relaxed line-clamp-3">
-                    {service.shortDescription}
-                  </p>
+                      <h3 className="text-lg font-bold text-slate-900 group-hover:text-sky-600 transition-colors">
+                        {service.name}
+                      </h3>
 
-                  <div className="pt-2">
-                    <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider block mb-1">
-                      Problemas frequentes resolvidos:
-                    </span>
-                    <ul className="text-[11px] text-slate-500 space-y-1">
-                      {service.commonProblems.slice(0, 2).map((prob, idx) => (
-                        <li key={idx} className="flex items-start gap-1.5 truncate">
-                          <span className="text-sky-500 shrink-0">✓</span>
-                          <span className="truncate">{prob}</span>
-                        </li>
-                      ))}
-                    </ul>
+                      <p className="text-xs text-slate-600 leading-relaxed line-clamp-2">
+                        {service.shortDescription}
+                      </p>
+
+                      <div className="pt-1">
+                        <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider block mb-1">
+                          Problemas frequentes resolvidos:
+                        </span>
+                        <ul className="text-[11px] text-slate-500 space-y-1">
+                          {service.commonProblems.slice(0, 2).map((prob, idx) => (
+                            <li key={idx} className="flex items-start gap-1.5 truncate">
+                              <span className="text-sky-500 shrink-0">✓</span>
+                              <span className="truncate">{prob}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    </div>
+
+                    <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                      <Link
+                        to={`/servicos/${service.slug}`}
+                        className="font-semibold text-sky-600 hover:text-sky-800 flex items-center gap-1"
+                      >
+                        <span>Ver detalhes</span>
+                        <ArrowRight className="w-3.5 h-3.5" />
+                      </Link>
+
+                      <Link
+                        to={`/solicitar-assistencia?servico=${service.slug}`}
+                        className="px-3 py-1.5 rounded-lg bg-sky-600 text-white hover:bg-sky-500 font-medium transition-colors shadow-2xs"
+                      >
+                        Pedir
+                      </Link>
+                    </div>
                   </div>
-                </div>
-
-                <div className="p-4 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs">
-                  <Link
-                    to={`/servicos/${service.slug}`}
-                    className="font-semibold text-sky-600 hover:text-sky-800 flex items-center gap-1"
-                  >
-                    <span>Ver detalhes do serviço</span>
-                    <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-
-                  <Link
-                    to={`/solicitar-assistencia?servico=${service.slug}`}
-                    className="px-3 py-1.5 rounded-lg bg-sky-600 text-white hover:bg-sky-500 font-medium transition-colors"
-                  >
-                    Pedir
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </div>
       </section>
 
@@ -398,7 +529,7 @@ export const HomePage: React.FC = () => {
               </div>
               <div className="flex items-center gap-2.5 font-medium">
                 <CheckCircle className="w-4 h-4 text-emerald-600 shrink-0" />
-                <span>Garantia oficial sobre o serviço efetuado</span>
+                <span>Relatório técnico e teste funcional na entrega</span>
               </div>
             </div>
 

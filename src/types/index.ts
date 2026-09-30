@@ -27,6 +27,10 @@ export interface ServiceItem {
   processSteps: { title: string; detail: string }[];
   faqs: FAQItem[];
   imagePlaceholder: string;
+  imageUrl?: string;
+  bannerUrl?: string;
+  imageAlt?: string;
+  order?: number;
   relatedServiceSlugs: string[];
   seoTitle: string;
   seoDescription: string;

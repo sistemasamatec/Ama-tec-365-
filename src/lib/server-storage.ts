@@ -788,7 +788,7 @@ export function saveServiceToDb(service: Partial<DbServiceItem> & { name: string
       { title: 'Triagem e Inspeção', detail: 'Diagnóstico dos circuitos e fontes em bancada técnica.' },
       { title: 'Orçamento Transparente', detail: 'Apresentação formal prévia com custo de peças e mão-de-obra.' },
       { title: 'Reparação e Testes', detail: 'Substituição de componentes e teste de estabilidade de 24 horas.' },
-      { title: 'Entrega com Garantia', detail: 'Emissão de comprovativo escrito de garantia oficial Ama Tec.' },
+      { title: 'Entrega e Teste Funcional', detail: 'Emissão de relatório técnico descritivo e teste em bancada.' },
     ],
     faqs: Array.isArray(service.faqs) ? service.faqs : [],
     imagePlaceholder: service.imagePlaceholder || '/images/hero/workshop-bench.webp',
@@ -1041,3 +1041,129 @@ export function getBackupContent(filename: string): string | null {
   if (!fs.existsSync(fullPath)) return null;
   return fs.readFileSync(fullPath, 'utf-8');
 }
+
+/* =========================================================================
+   CONTEÚDO DA HOME (HERO & TEXTOS PRINCIPAIS)
+========================================================================= */
+
+const HOME_CONTENT_FILE = 'home_content.json';
+const ADMIN_USERS_FILE = 'admin_users.json';
+
+export interface HomeContentData {
+  heroTagline: string;
+  heroTitle: string;
+  heroSubtitle: string;
+  heroPrimaryButtonText: string;
+  heroPrimaryButtonLink: string;
+  heroSecondaryButtonText: string;
+  heroImageUrl: string;
+  warrantyBadgeText: string;
+  updatedAt?: string;
+}
+
+export function getHomeContentFromDb(): HomeContentData {
+  const defaultContent: HomeContentData = {
+    heroTagline: 'Assistência Técnica Oficial no Golf 2, Luanda',
+    heroTitle: 'Reparação precisa de equipamentos eletrónicos com garantia.',
+    heroSubtitle: 'A Ama Tec é o centro técnico em Luanda dedicado ao diagnóstico rigoroso e reparação de eletrodomésticos, televisores, placas eletrónicas ao nível de componentes e equipamentos industriais.',
+    heroPrimaryButtonText: 'Solicitar Assistência',
+    heroPrimaryButtonLink: '/solicitar-assistencia',
+    heroSecondaryButtonText: 'Falar com Técnico no WhatsApp',
+    heroImageUrl: '/images/hero-workbench.jpg',
+    warrantyBadgeText: 'Garantia por Escrito em Peças & Mão-de-Obra',
+  };
+
+  return safeReadJson<HomeContentData>(HOME_CONTENT_FILE, defaultContent);
+}
+
+export function saveHomeContentToDb(content: Partial<HomeContentData>, userEmail: string = 'admin'): HomeContentData {
+  const current = getHomeContentFromDb();
+  const updated: HomeContentData = {
+    ...current,
+    ...content,
+    updatedAt: new Date().toISOString(),
+  };
+  safeWriteJson(HOME_CONTENT_FILE, updated);
+  logAudit('HOME_CONTENT_UPDATED', updated.heroTitle, userEmail, '127.0.0.1');
+  return updated;
+}
+
+/* =========================================================================
+   UTILIZADORES E PERMISSÕES (ADMIN, GESTOR, TÉCNICO)
+========================================================================= */
+
+export interface SystemUser {
+  id: string;
+  name: string;
+  email: string;
+  role: 'admin' | 'gestor' | 'tecnico';
+  createdAt: string;
+  active: boolean;
+}
+
+export function getAdminUsersFromDb(): SystemUser[] {
+  const defaultUsers: SystemUser[] = [
+    {
+      id: 'usr-1',
+      name: 'Josué Jaime',
+      email: 'josuefranciscojaime@gmail.com',
+      role: 'admin',
+      createdAt: '2026-01-01T00:00:00Z',
+      active: true,
+    },
+    {
+      id: 'usr-2',
+      name: 'Gestão Operacional',
+      email: 'geral@amatec.ao',
+      role: 'gestor',
+      createdAt: '2026-02-15T00:00:00Z',
+      active: true,
+    },
+    {
+      id: 'usr-3',
+      name: 'Bancada Técnica',
+      email: 'suporte@amatec.ao',
+      role: 'tecnico',
+      createdAt: '2026-03-01T00:00:00Z',
+      active: true,
+    },
+  ];
+
+  return safeReadJson<SystemUser[]>(ADMIN_USERS_FILE, defaultUsers);
+}
+
+export function saveAdminUserToDb(user: Partial<SystemUser> & { name: string; email: string; role: 'admin' | 'gestor' | 'tecnico' }, userEmail: string = 'admin'): SystemUser {
+  const users = getAdminUsersFromDb();
+  const existingIdx = users.findIndex(u => u.id === user.id || u.email === user.email);
+  const now = new Date().toISOString();
+
+  let saved: SystemUser;
+  if (existingIdx >= 0) {
+    saved = { ...users[existingIdx], ...user };
+    users[existingIdx] = saved;
+  } else {
+    saved = {
+      id: user.id || `usr-${Date.now()}`,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      createdAt: now,
+      active: user.active ?? true,
+    };
+    users.push(saved);
+  }
+
+  safeWriteJson(ADMIN_USERS_FILE, users);
+  logAudit('USER_SAVED', `${saved.email} (${saved.role})`, userEmail, '127.0.0.1');
+  return saved;
+}
+
+export function deleteAdminUserFromDb(id: string, userEmail: string = 'admin'): boolean {
+  const users = getAdminUsersFromDb();
+  const filtered = users.filter(u => u.id !== id);
+  if (filtered.length === users.length) return false;
+  safeWriteJson(ADMIN_USERS_FILE, filtered);
+  logAudit('USER_DELETED', id, userEmail, '127.0.0.1');
+  return true;
+}
+

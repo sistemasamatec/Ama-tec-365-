@@ -96,7 +96,7 @@ function buildRoutesList(): RouteMeta[] {
     {
       url: '/faq',
       title: 'Perguntas Frequentes (FAQ) | Ama Tec Luanda',
-      description: 'Respostas a dúvidas comuns sobre prazos médios de diagnóstico, garantia oficial de 90 dias por escrito, formas de pagamento aceites e localização da oficina no Golf 2.',
+      description: 'Respostas a dúvidas comuns sobre prazos médios de diagnóstico, garantia oficial por escrito, formas de pagamento aceites e localização da oficina no Golf 2.',
       jsonLd: [
         getBreadcrumbJsonLd([
           { name: 'Início', url: '/' },

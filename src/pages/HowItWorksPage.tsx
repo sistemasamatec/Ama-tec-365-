@@ -77,12 +77,12 @@ export const HowItWorksPage: React.FC = () => {
     },
     {
       num: '05',
-      title: 'Entrega com Garantia Técnica',
+      title: 'Entrega e Teste Funcional',
       icon: ShieldCheck,
-      desc: 'O cliente é notificado para levantamento ou entrega do equipamento, acompanhado de relatório de intervenção e garantia técnica escrita sobre o serviço executado.',
+      desc: 'O cliente é notificado para levantamento ou entrega do equipamento, acompanhado de relatório de intervenção técnica e demonstração de conformidade.',
       details: [
         'Demonstração de funcionamento no ato da entrega',
-        'Garantia oficial sobre o serviço',
+        'Relatório técnico discriminado da intervenção',
         'Suporte pós-reparação direto com a equipa',
       ],
     },
@@ -100,14 +100,14 @@ export const HowItWorksPage: React.FC = () => {
         'Para a maioria dos eletrodomésticos, televisores e sistemas comerciais, o diagnóstico é concluído entre 24 a 48 horas úteis após a receção física do aparelho. Avarias intermitentes ou placas que sofreram sobretensão grave podem requerer monitorização térmica adicional em bancada.',
     },
     {
-      question: 'Como funciona a garantia dos serviços prestados?',
+      question: 'Como funciona o acompanhamento e suporte após a reparação?',
       answer:
-        'Todas as reparações efetuadas pela Ama Tec contam com garantia técnica escrita sobre as peças novas aplicadas e sobre a mão-de-obra executada. A garantia cobre qualquer anomalia diretamente relacionada com a intervenção efetuada durante o período estipulado na guia de entrega.',
+        'Todas as intervenções efetuadas pela Ama Tec são acompanhadas por relatório técnico dos componentes substituídos, ensaio de bancada e suporte direto com a nossa equipa técnica para esclarecimento de dúvidas e bom funcionamento do aparelho.',
     },
     {
-      question: 'O que está excluído da garantia técnica?',
+      question: 'Quais os cuidados recomendados após a reparação?',
       answer:
-        'A garantia não cobre avarias decorrentes de fatores externos posteriores à entrega, designadamente: quedas físicas, entrada de líquidos, queima por picos severos de tensão na rede elétrica externa da habitação, ou violação dos selos de garantia por terceiros não autorizados.',
+        'Recomendamos sempre o uso de protetores de tensão ou estabilizadores de rede para mitigar oscilações elétricas na habitação, além de evitar exposição a humidade excessiva e manter a ventilação desobstruída.',
     },
     {
       question: 'O diagnóstico tem custos se eu optar por não avançar com a reparação?',

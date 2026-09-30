@@ -1792,7 +1792,7 @@ export const SERVICES: ServiceItem[] = [
     imagePlaceholder: '/images/hero/workshop-bench.webp',
     relatedServiceSlugs: ['reparacao-tecnica-geral', 'diagnostico-tecnico'],
     seoTitle: 'Testes e Ensaios de Equipamentos em Luanda | Ama Tec',
-    seoDescription: 'Protocolos de teste em bancada de ensaio com garantia oficial por escrito na Ama Tec Golf 2.',
+    seoDescription: 'Protocolos de teste e ensaio em bancada técnica especializada na Ama Tec Golf 2.',
     status: 'published',
   },
   {
@@ -1818,7 +1818,7 @@ export const SERVICES: ServiceItem[] = [
     faqs: [
       {
         question: 'A reparação inclui garantia por escrito?',
-        answer: 'Sim, a Ama Tec emite sempre comprovativo oficial por escrito de garantia com validade de 90 dias sobre a intervenção.',
+        answer: 'Sim, a Ama Tec emite sempre comprovativo oficial por escrito de garantia sobre a intervenção.',
       },
     ],
     imagePlaceholder: '/images/hero/workshop-bench.webp',

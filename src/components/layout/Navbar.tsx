@@ -9,13 +9,17 @@ import {
   ChevronRight,
   Wrench,
   ArrowRight,
+  ExternalLink,
 } from 'lucide-react';
 import { CATEGORIES_CONFIG } from '../../content/services';
 import { getGeneralWhatsAppUrl } from '../../lib/whatsapp';
 import { track } from '../../lib/analytics';
+import { CLIENT_PORTAL_URL } from '../../lib/config';
 import { useSettings } from '../../context/SettingsContext';
 import { useServices } from '../../context/ServicesContext';
 import { ServiceCategory } from '../../types';
+
+import { BrandLogo } from '../ui/BrandLogo';
 
 export const Navbar: React.FC = () => {
   const { settings } = useSettings();
@@ -160,17 +164,19 @@ export const Navbar: React.FC = () => {
       }`}
     >
       {/* 1. Barra de Topo com dados NAP Oficiais (Desktop) */}
-      <div className="bg-slate-900 text-slate-300 text-xs py-1.5 px-4 hidden md:block border-b border-slate-800">
-        <div className="max-w-7xl mx-auto flex justify-between items-center">
+      <div className="bg-[#0B1220] text-[#E6EDF7] text-[14px] py-2 px-4 hidden md:block border-b border-[#111B2E]">
+        <div className="max-w-[1200px] mx-auto flex justify-between items-center">
           <div className="flex items-center gap-6">
-            <span className="flex items-center gap-1.5 text-slate-300">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <span className="flex items-center gap-1.5 text-[#E6EDF7]">
+              <span className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
               <span>Oficina e Assistência Técnica no Golf 2, Luanda</span>
             </span>
-            <span className="text-slate-600">|</span>
-            <span className="text-slate-400">NIF: {company.nif}</span>
-            <span className="text-slate-600">|</span>
-            <span className="text-slate-400">{settings.businessHours.weekdays}</span>
+            <span className="text-[#475569]">|</span>
+            <span className="text-[#CBD5E1]">NIF: {company.nif}</span>
+            <span className="text-[#475569]">|</span>
+            <span className="text-[#CBD5E1]">
+              {settings.businessHours.weekdays} · {settings.businessHours.saturday}
+            </span>
           </div>
           <div className="flex items-center gap-4">
             <a
@@ -178,16 +184,31 @@ export const Navbar: React.FC = () => {
               onClick={() => track('phone_click', { source: 'topbar' })}
               className="flex items-center gap-1.5 hover:text-white transition-colors"
             >
-              <Phone className="w-3.5 h-3.5 text-sky-400" />
+              <Phone className="w-3.5 h-3.5 text-[#0EA5E9]" />
               <span>{company.phoneDisplay}</span>
             </a>
-            <span className="text-slate-600">·</span>
+            {CLIENT_PORTAL_URL ? (
+              <>
+                <span className="text-[#475569]">·</span>
+                <a
+                  href={CLIENT_PORTAL_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => track('client_portal_topbar_click')}
+                  className="hidden sm:inline-flex items-center gap-1.5 text-[#0EA5E9] hover:text-[#38BDF8] transition-colors"
+                >
+                  <ExternalLink className="w-3.5 h-3.5" />
+                  <span>Consultar minha assistência</span>
+                </a>
+              </>
+            ) : null}
+            <span className="text-[#475569] hidden sm:inline">·</span>
             <a
               href={getGeneralWhatsAppUrl()}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => track('whatsapp_click', { source: 'topbar' })}
-              className="flex items-center gap-1.5 text-emerald-400 hover:text-emerald-300 transition-colors font-medium"
+              className="flex items-center gap-1.5 text-[#10B981] hover:text-[#34D399] transition-colors font-medium"
             >
               <MessageSquare className="w-3.5 h-3.5" />
               <span>WhatsApp Direto</span>
@@ -197,7 +218,7 @@ export const Navbar: React.FC = () => {
       </div>
 
       {/* 2. Barra Principal de Navegação */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-4 xl:px-8">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20 gap-2 xl:gap-4">
           {/* Logo Oficial à Esquerda com link para '/' */}
           <Link
@@ -205,11 +226,7 @@ export const Navbar: React.FC = () => {
             className="flex items-center gap-2 shrink-0 focus-visible:ring-2 focus-visible:ring-sky-500 rounded-lg p-1"
             aria-label="Ama Tec — Início"
           >
-            <img
-              src={settings.visualIdentity?.logoUrl || '/brand/logo.svg'}
-              alt="Ama Tec — Assistência Técnica de Equipamentos Eletrónicos"
-              className="h-9 sm:h-10 md:h-11 w-auto max-w-[150px] sm:max-w-[190px] xl:max-w-[240px] object-contain"
-            />
+            <BrandLogo variant="navbar" />
           </Link>
 
           {/* Navegação Principal Desktop (≥1024px) */}
@@ -413,16 +430,16 @@ export const Navbar: React.FC = () => {
           </nav>
 
           {/* Área de Ações à Direita: Botão "Solicitar Assistência" SEMPRE VISÍVEL */}
-          <div className="flex items-center gap-1.5 sm:gap-3 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {/* Botão de WhatsApp Rápido (Desktop xl) */}
             <a
               href={getGeneralWhatsAppUrl()}
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => track('whatsapp_click', { source: 'nav_button' })}
-              className="hidden xl:inline-flex items-center gap-2 px-3 py-2 rounded-lg text-emerald-700 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-xs font-medium transition-colors whitespace-nowrap"
+              className="hidden xl:inline-flex items-center gap-2 min-h-[48px] px-4 py-2.5 rounded-[10px] text-white bg-[#059669] hover:bg-[#10B981] text-[14px] font-semibold transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[#10B981] focus-visible:outline-none"
             >
-              <MessageSquare className="w-3.5 h-3.5 text-emerald-600" />
+              <MessageSquare className="w-4 h-4 text-white" />
               <span>WhatsApp</span>
             </a>
 
@@ -430,10 +447,10 @@ export const Navbar: React.FC = () => {
             <Link
               to="/solicitar-assistencia"
               onClick={() => track('conversion', { step: 'nav_cta_click' })}
-              className="inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3.5 xl:px-4 py-2 sm:py-2.5 rounded-lg bg-sky-600 text-white hover:bg-sky-700 font-medium text-xs xl:text-sm shadow-sm transition-all hover:shadow active:scale-95 shrink-0 focus-visible:ring-2 focus-visible:ring-sky-500 whitespace-nowrap"
+              className="inline-flex items-center gap-2 min-h-[48px] px-3.5 sm:px-5 py-2.5 rounded-[10px] bg-[#0284C7] hover:bg-[#0EA5E9] text-white font-semibold text-[14px] sm:text-[15px] transition-all hover:shadow-[0_16px_40px_rgba(2,132,199,0.16)] active:scale-95 shrink-0 focus-visible:ring-2 focus-visible:ring-[#0EA5E9] focus-visible:outline-none whitespace-nowrap"
               aria-label="Solicitar Assistência Técnica"
             >
-              <Wrench className="w-3.5 h-3.5 xl:w-4 xl:h-4 shrink-0" />
+              <Wrench className="w-4 h-4 shrink-0" />
               <span className="hidden xs:inline sm:inline">Solicitar Assistência</span>
               <span className="inline xs:hidden sm:hidden">Assistência</span>
             </Link>
@@ -674,6 +691,22 @@ export const Navbar: React.FC = () => {
               <span>Solicitar Assistência Técnica</span>
             </Link>
 
+            {CLIENT_PORTAL_URL ? (
+              <a
+                href={CLIENT_PORTAL_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => {
+                  track('client_portal_mobile_click');
+                  setMobileMenuOpen(false);
+                }}
+                className="w-full min-h-[44px] py-2.5 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded-xl text-center font-medium text-sm flex items-center justify-center gap-2 transition-colors active:scale-98"
+              >
+                <ExternalLink className="w-4 h-4 text-sky-600" />
+                <span>Consultar minha assistência</span>
+              </a>
+            ) : null}
+
             <a
               href={getGeneralWhatsAppUrl()}
               target="_blank"
@@ -689,7 +722,7 @@ export const Navbar: React.FC = () => {
             </a>
 
             <div className="pt-2 text-center text-xs text-slate-500">
-              <span>Oficina no Golf 2, Luanda · Garantia de 90 dias por escrito</span>
+              <span>Oficina no Golf 2, Luanda · Bancada Técnica Especializada</span>
             </div>
           </div>
         </div>
