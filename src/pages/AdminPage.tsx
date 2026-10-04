@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useId } from 'react';
 import {
   Shield,
+  ShieldAlert,
   Lock,
   Mail,
   LogOut,
@@ -36,16 +37,31 @@ import {
   UserCheck,
   Send,
   Layers,
+  Copy,
 } from 'lucide-react';
 import { CATEGORIES_CONFIG } from '../content/services';
 import { ServiceCategory } from '../types';
 import { useSettings } from '../context/SettingsContext';
+import { getClientFirebaseAuth, FIREBASE_PROJECT_ID, type User } from '../lib/firebase';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 
 interface AdminUserSession {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'editor';
+  role: 'admin' | 'editor' | 'gestor';
+}
+
+interface AccessDeniedState {
+  email: string;
+  uid: string;
+  projectId: string;
+  claims: {
+    siteRole?: string;
+    role?: string;
+    [key: string]: any;
+  };
+  reason: string;
 }
 
 interface ServiceFormData {
@@ -68,6 +84,11 @@ export const AdminPage: React.FC = () => {
 
   // Estado de Autenticação
   const [currentUser, setCurrentUser] = useState<AdminUserSession | null>(null);
+  const [accessDenied, setAccessDenied] = useState<AccessDeniedState | null>(null);
+  const [firebaseUser, setFirebaseUser] = useState<User | null>(null);
+  const [refreshingPermissions, setRefreshingPermissions] = useState(false);
+  const [copiedUid, setCopiedUid] = useState(false);
+  const [copiedCommand, setCopiedCommand] = useState(false);
   const [checkingAuth, setCheckingAuth] = useState(true);
   const [loginEmail, setLoginEmail] = useState('josuefranciscojaime@gmail.com');
   const [loginPassword, setLoginPassword] = useState('');
@@ -197,6 +218,140 @@ export const AdminPage: React.FC = () => {
     setLocalSettings(settings);
   }, [settings]);
 
+  // Avaliação rigorosa das permissões do utilizador Firebase Auth via token claims
+  const evaluateFirebaseUser = async (user: User, forceRefresh = false): Promise<boolean> => {
+    try {
+      if (forceRefresh) {
+        await user.getIdToken(true);
+      }
+      const tokenResult = await user.getIdTokenResult(forceRefresh);
+      const claims = (tokenResult.claims || {}) as Record<string, any>;
+      const siteRole = (claims.siteRole as string) || '';
+      const role = (claims.role as string) || '';
+
+      const isAllowed = siteRole === 'admin' || siteRole === 'gestor' || role === 'admin';
+
+      if (isAllowed) {
+        setAccessDenied(null);
+        setCurrentUser({
+          id: user.uid,
+          name: user.displayName || user.email?.split('@')[0] || 'Administrador',
+          email: user.email || '',
+          role: (siteRole === 'gestor' ? 'gestor' : 'admin') as any,
+        });
+        return true;
+      } else {
+        let reason =
+          'O seu utilizador não possui o claim obrigatório "siteRole: \'admin\'" ou "siteRole: \'gestor\'" no token de autenticação.';
+        if (siteRole) {
+          reason = `O papel atual "${siteRole}" não possui privilégios de administração (requer "admin" ou "gestor").`;
+        }
+
+        setAccessDenied({
+          email: user.email || '',
+          uid: user.uid,
+          projectId: FIREBASE_PROJECT_ID,
+          claims: {
+            siteRole: siteRole || undefined,
+            role: role || undefined,
+            ...claims,
+          },
+          reason,
+        });
+        setCurrentUser(null);
+        return false;
+      }
+    } catch (err: any) {
+      console.error('Erro ao avaliar claims do Firebase:', err);
+      return false;
+    }
+  };
+
+  // Observador de estado de autenticação Firebase
+  useEffect(() => {
+    try {
+      const auth = getClientFirebaseAuth();
+      const unsubscribe = onAuthStateChanged(auth, async (fbUser) => {
+        setFirebaseUser(fbUser);
+        if (fbUser) {
+          await evaluateFirebaseUser(fbUser, false);
+        }
+      });
+      return () => unsubscribe();
+    } catch (err) {
+      console.warn('[Firebase Auth] Cliente não inicializado ou sem API key:', err);
+    }
+  }, []);
+
+  // Recarregar permissões forçando atualização do ID token (getIdToken(true))
+  const handleRefreshPermissions = async () => {
+    setRefreshingPermissions(true);
+    try {
+      if (firebaseUser) {
+        // Executa getIdToken(true) para forçar o recarregamento do token nos servidores do Firebase Auth
+        await firebaseUser.getIdToken(true);
+        const allowed = await evaluateFirebaseUser(firebaseUser, true);
+        if (allowed) {
+          showToast('Permissões validadas com sucesso! Acesso concedido ao painel.', 'success');
+        } else {
+          showToast('Claims recarregados, mas a permissão continua negada.', 'error');
+        }
+      } else {
+        // Consulta o diagnóstico no servidor e recarrega os claims da sessão
+        const res = await fetch('/api/admin/diagnostic');
+        if (res.ok) {
+          const diag = await res.json();
+          if (diag.sessionUser && (diag.sessionUser.role === 'admin' || diag.sessionUser.siteRole === 'admin')) {
+            setAccessDenied(null);
+            setCurrentUser(diag.sessionUser);
+            showToast('Permissões validadas com sucesso!', 'success');
+          } else {
+            setAccessDenied((prev) =>
+              prev
+                ? {
+                    ...prev,
+                    projectId: diag.projectId || prev.projectId,
+                    claims: {
+                      ...prev.claims,
+                      role: diag.sessionUser?.role,
+                      siteRole: diag.sessionUser?.siteRole,
+                    },
+                    reason: 'Nenhum claim com privilégios de admin/gestor encontrado.',
+                  }
+                : null
+            );
+            showToast('Permissões verificadas: sem privilégios suficientes.', 'error');
+          }
+        }
+      }
+    } catch (err: any) {
+      showToast(`Erro ao recarregar permissões: ${err.message || err}`, 'error');
+    } finally {
+      setRefreshingPermissions(false);
+    }
+  };
+
+  const loadDiagnosticInfo = async () => {
+    try {
+      const res = await fetch('/api/admin/diagnostic');
+      if (res.ok) {
+        const diag = await res.json();
+        setAccessDenied({
+          email: firebaseUser?.email || loginEmail || diag.sessionUser?.email || 'josuefranciscojaime@gmail.com',
+          uid: firebaseUser?.uid || diag.sessionUser?.id || '(não autenticado no Firebase)',
+          projectId: diag.projectId || FIREBASE_PROJECT_ID,
+          claims: {
+            siteRole: diag.sessionUser?.siteRole || undefined,
+            role: diag.sessionUser?.role || undefined,
+          },
+          reason: 'Acesso negado: o token de autenticação não possui os claims necessários (siteRole: "admin" ou "gestor").',
+        });
+      }
+    } catch (err: any) {
+      showToast(`Erro ao carregar diagnóstico: ${err.message || err}`, 'error');
+    }
+  };
+
   // Verificar sessão ao carregar a página
   const checkCurrentSession = async () => {
     try {
@@ -243,6 +398,26 @@ export const AdminPage: React.FC = () => {
     setLoginLoading(true);
 
     try {
+      // 1. Tenta autenticação no Firebase Auth no cliente se configurado
+      try {
+        const auth = getClientFirebaseAuth();
+        const userCred = await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+        if (userCred.user) {
+          setFirebaseUser(userCred.user);
+          const allowed = await evaluateFirebaseUser(userCred.user, true);
+          if (allowed) {
+            showToast('Sessão iniciada com sucesso. Bem-vindo ao painel!', 'success');
+            return;
+          } else {
+            // Acesso negado com painel de diagnóstico
+            return;
+          }
+        }
+      } catch (fbErr: any) {
+        // Se utilizador não existir no Firebase Auth client, continua para backend local
+      }
+
+      // 2. Autenticação na API do servidor
       const res = await fetch('/api/admin/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -251,8 +426,24 @@ export const AdminPage: React.FC = () => {
       const data = await res.json();
 
       if (res.ok && data.success) {
-        setCurrentUser(data.user);
-        showToast('Sessão iniciada com sucesso. Bem-vindo ao painel!', 'success');
+        const isStaff = data.user.role === 'admin' || data.user.role === 'gestor';
+        if (!isStaff) {
+          setAccessDenied({
+            email: data.user.email,
+            uid: data.user.id,
+            projectId: FIREBASE_PROJECT_ID,
+            claims: {
+              role: data.user.role,
+              siteRole: undefined,
+            },
+            reason: `O utilizador possui o papel "${data.user.role}", que não tem autorização para aceder à área de administração. Requer 'admin' ou 'gestor'.`,
+          });
+          setCurrentUser(null);
+        } else {
+          setCurrentUser(data.user);
+          setAccessDenied(null);
+          showToast('Sessão iniciada com sucesso. Bem-vindo ao painel!', 'success');
+        }
       } else {
         setLoginError(data.error || 'Credenciais de acesso incorretas.');
       }
@@ -265,9 +456,17 @@ export const AdminPage: React.FC = () => {
 
   const handleLogout = async () => {
     try {
+      try {
+        const auth = getClientFirebaseAuth();
+        await signOut(auth);
+      } catch {
+        // Ignora erro de signout se não ativo
+      }
       await fetch('/api/admin/logout', { method: 'POST' });
     } finally {
       setCurrentUser(null);
+      setFirebaseUser(null);
+      setAccessDenied(null);
       showToast('Sessão terminada.', 'success');
     }
   };
@@ -716,6 +915,199 @@ export const AdminPage: React.FC = () => {
   }
 
   // ----------------------------------------------------
+  // RENDER: PAINEL DE DIAGNÓSTICO (QUANDO ACESSO NEGADO)
+  // ----------------------------------------------------
+  if (accessDenied) {
+    const siteRoleClaim = accessDenied.claims.siteRole;
+    const roleClaim = accessDenied.claims.role;
+    const commandToRun = `npx tsx scripts/set-admin-claim.ts ${accessDenied.uid} admin`;
+
+    return (
+      <div className="min-h-screen bg-slate-950 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <div className="sm:mx-auto sm:w-full sm:max-w-2xl text-center mb-6">
+          <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-red-500/10 border border-red-500/30 text-red-400 mb-3 shadow-lg shadow-red-500/5">
+            <ShieldAlert className="w-8 h-8" />
+          </div>
+          <div className="inline-block px-3 py-1 mb-2 rounded-full text-xs font-semibold uppercase tracking-wider bg-red-500/10 text-red-400 border border-red-500/20">
+            HTTP 403 &bull; Acesso Negado
+          </div>
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
+            Painel de Diagnóstico de Permissões
+          </h2>
+          <p className="mt-1 text-sm text-slate-400">
+            O utilizador está autenticado, mas as permissões do token não cumprem os requisitos de acesso a <span className="text-white font-medium">/admin</span>.
+          </p>
+        </div>
+
+        <div className="sm:mx-auto sm:w-full sm:max-w-2xl">
+          <div className="bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl p-6 sm:p-8 backdrop-blur-xl space-y-6">
+            
+            {/* Motivo da Negação */}
+            <div className="p-4 rounded-xl bg-red-950/40 border border-red-500/30 flex items-start gap-3.5">
+              <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-semibold text-red-200">Motivo da Negação</h4>
+                <p className="mt-1 text-xs sm:text-sm text-red-300/90 leading-relaxed">
+                  {accessDenied.reason}
+                </p>
+              </div>
+            </div>
+
+            {/* Grid com detalhes de diagnóstico */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+              {/* Email */}
+              <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800">
+                <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                  Email Autenticado
+                </span>
+                <span className="text-sm font-mono text-white break-all">
+                  {accessDenied.email || '(não disponível)'}
+                </span>
+              </div>
+
+              {/* Firebase Project ID */}
+              <div className="p-4 rounded-xl bg-slate-950/70 border border-slate-800">
+                <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                  Project ID do Firebase
+                </span>
+                <span className="text-sm font-mono text-sky-400 break-all">
+                  {accessDenied.projectId}
+                </span>
+              </div>
+
+              {/* UID */}
+              <div className="sm:col-span-2 p-4 rounded-xl bg-slate-950/70 border border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="block text-[11px] font-semibold uppercase tracking-wider text-slate-400 mb-1">
+                    UID do Utilizador (Firebase Auth)
+                  </span>
+                  <span className="text-sm font-mono text-emerald-400 break-all select-all">
+                    {accessDenied.uid || '(não disponível)'}
+                  </span>
+                </div>
+                {accessDenied.uid && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(accessDenied.uid);
+                      setCopiedUid(true);
+                      setTimeout(() => setCopiedUid(false), 2000);
+                    }}
+                    className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition-colors cursor-pointer"
+                  >
+                    {copiedUid ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+                    <span>{copiedUid ? 'Copiado!' : 'Copiar UID'}</span>
+                  </button>
+                )}
+              </div>
+
+              {/* Claims do Token: siteRole & role */}
+              <div className="sm:col-span-2 p-4 rounded-xl bg-slate-950/70 border border-slate-800 space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400">
+                    Claims do Token de Autenticação
+                  </span>
+                  <span className="text-[11px] text-slate-500">
+                    Decodificados do ID Token
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                    <div>
+                      <span className="block text-[11px] text-slate-400">siteRole</span>
+                      <strong className={`text-sm font-mono ${siteRoleClaim === 'admin' || siteRoleClaim === 'gestor' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                        {siteRoleClaim || '(ausente)'}
+                      </strong>
+                    </div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded font-semibold ${siteRoleClaim === 'admin' || siteRoleClaim === 'gestor' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'}`}>
+                      {siteRoleClaim === 'admin' || siteRoleClaim === 'gestor' ? 'Válido' : 'Requer admin/gestor'}
+                    </span>
+                  </div>
+
+                  <div className="p-3 rounded-lg bg-slate-900 border border-slate-800 flex items-center justify-between">
+                    <div>
+                      <span className="block text-[11px] text-slate-400">role</span>
+                      <strong className={`text-sm font-mono ${roleClaim === 'admin' || roleClaim === 'gestor' ? 'text-emerald-400' : 'text-slate-300'}`}>
+                        {roleClaim || '(ausente)'}
+                      </strong>
+                    </div>
+                    <span className={`text-[10px] px-2 py-0.5 rounded font-semibold ${roleClaim === 'admin' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-400'}`}>
+                      {roleClaim || 'indefinido'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Exibição completa dos claims em JSON */}
+                <details className="mt-2 text-[11px] text-slate-400 cursor-pointer">
+                  <summary className="hover:text-slate-300 select-none py-1">
+                    Ver todos os claims do token (JSON)
+                  </summary>
+                  <pre className="mt-2 p-3 rounded-lg bg-slate-950 font-mono text-[11px] text-slate-300 overflow-x-auto border border-slate-800/80">
+                    {JSON.stringify(accessDenied.claims, null, 2)}
+                  </pre>
+                </details>
+              </div>
+            </div>
+
+            {/* Como resolver: comando para o administrador */}
+            {accessDenied.uid && (
+              <div className="p-4 rounded-xl bg-sky-950/30 border border-sky-500/20 space-y-2">
+                <span className="block text-xs font-semibold text-sky-300">
+                  Como atribuir permissões a este utilizador:
+                </span>
+                <p className="text-xs text-slate-300">
+                  No servidor ou terminal de desenvolvimento, execute o script de atribuição de claims:
+                </p>
+                <div className="p-2.5 rounded-lg bg-slate-950 border border-slate-800 flex items-center justify-between gap-2 font-mono text-xs text-sky-400">
+                  <span className="break-all">{commandToRun}</span>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      navigator.clipboard.writeText(commandToRun);
+                      setCopiedCommand(true);
+                      setTimeout(() => setCopiedCommand(false), 2000);
+                    }}
+                    className="shrink-0 p-1.5 rounded hover:bg-slate-800 text-slate-400 hover:text-white transition-colors cursor-pointer"
+                    title="Copiar comando"
+                  >
+                    {copiedCommand ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Botões de Ação */}
+            <div className="pt-2 flex flex-col sm:flex-row gap-3">
+              <button
+                type="button"
+                onClick={handleRefreshPermissions}
+                disabled={refreshingPermissions}
+                className="flex-1 py-3 px-4 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-sm font-semibold shadow-lg shadow-sky-600/20 transition-all flex items-center justify-center gap-2 cursor-pointer disabled:opacity-50"
+              >
+                <RefreshCw className={`w-4 h-4 ${refreshingPermissions ? 'animate-spin' : ''}`} />
+                <span>{refreshingPermissions ? 'A recarregar claims...' : 'Atualizar permissões'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="py-3 px-4 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-sm font-medium transition-colors cursor-pointer"
+              >
+                Tentar com outra conta
+              </button>
+            </div>
+
+            <p className="text-[11px] text-center text-slate-500">
+              O botão <span className="text-slate-400 font-semibold">Atualizar permissões</span> executa <code className="font-mono text-sky-400">getIdToken(true)</code> para forçar o recarregamento do token com os novos custom claims sem necessidade de fazer logout.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // ----------------------------------------------------
   // RENDER: TELA DE LOGIN (SE NÃO AUTENTICADO)
   // ----------------------------------------------------
   if (!currentUser) {
@@ -810,10 +1202,18 @@ export const AdminPage: React.FC = () => {
               </button>
             </form>
 
-            <div className="mt-6 pt-6 border-t border-slate-800 text-center">
+            <div className="mt-6 pt-6 border-t border-slate-800 flex flex-col gap-2 text-center">
+              <button
+                type="button"
+                onClick={loadDiagnosticInfo}
+                className="text-xs text-sky-400 hover:text-sky-300 transition-colors inline-flex items-center justify-center gap-1 cursor-pointer"
+              >
+                <ShieldAlert className="w-3.5 h-3.5" />
+                <span>Ver diagnóstico de permissões e claims</span>
+              </button>
               <a
                 href="/"
-                className="text-xs text-slate-400 hover:text-sky-400 transition-colors inline-flex items-center gap-1"
+                className="text-xs text-slate-400 hover:text-sky-400 transition-colors inline-flex items-center justify-center gap-1"
               >
                 &larr; Voltar à página pública do site
               </a>

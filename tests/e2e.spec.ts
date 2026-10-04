@@ -72,9 +72,11 @@ test.describe('Ama Tec — Painel de Administração & CRUD de Serviços', () =>
     // 1. Ecrã de Login
     await expect(page.locator('h2')).toContainText('Área de Administração');
 
-    // Preenche credenciais do administrador inicial (Josué)
-    await page.fill('input[type="email"]', 'josuefranciscojaime@gmail.com');
-    await page.fill('input[type="password"]', 'AmaTec#2026!Golf2');
+    // Preenche credenciais do administrador inicial
+    const e2eEmail = process.env.AMATEC_ADMIN_BOOTSTRAP_EMAIL || 'admin@amatec.ao';
+    const e2ePassword = process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD || 'E2ETestPassword16CharsMin!';
+    await page.fill('input[type="email"]', e2eEmail);
+    await page.fill('input[type="password"]', e2ePassword);
     await page.click('button[type="submit"]');
 
     // 2. Confirmação de Entrada no Painel

@@ -24,7 +24,7 @@
 
 import type { IncomingMessage, ServerResponse } from 'http';
 import 'dotenv/config';
-import { getFirestoreDb } from '../src/lib/serverless-db';
+import { getFirestoreDb, disableFirestoreOnAuthError } from '../src/lib/serverless-db';
 import { getErpFirebaseConfig, getErpFirestoreDb } from '../src/lib/erp-firebase';
 
 // ============================================================================
@@ -74,8 +74,11 @@ async function getIdempotencyRecord(key: string): Promise<IdempotencyRecord | nu
           return rec;
         }
       }
-    } catch (err) {
-      console.warn('[Site Firestore] Leitura em _idempotency falhou, fallback em memória:', err);
+    } catch (err: any) {
+      disableFirestoreOnAuthError(err);
+      if (err?.code !== 7 && err?.code !== 16 && !err?.message?.includes('PERMISSION_DENIED')) {
+        console.warn('[Site Firestore] Leitura em _idempotency falhou, fallback em memória:', err?.message || err);
+      }
     }
   }
 
@@ -106,8 +109,11 @@ async function saveIdempotencyRecord(key: string, status: number, data: any): Pr
         ttl: new Date(expiresAt),
         createdAt: new Date().toISOString(),
       });
-    } catch (err) {
-      console.warn('[Site Firestore] Gravação em _idempotency falhou:', err);
+    } catch (err: any) {
+      disableFirestoreOnAuthError(err);
+      if (err?.code !== 7 && err?.code !== 16 && !err?.message?.includes('PERMISSION_DENIED')) {
+        console.warn('[Site Firestore] Gravação em _idempotency falhou:', err?.message || err);
+      }
     }
   }
 }
@@ -159,8 +165,11 @@ async function checkIpRateLimit(clientIp: string): Promise<{ allowed: boolean; m
         return { allowed: true };
       });
       return result;
-    } catch (err) {
-      console.warn('[Site Firestore] Rate limit falhou, fallback em memória:', err);
+    } catch (err: any) {
+      disableFirestoreOnAuthError(err);
+      if (err?.code !== 7 && err?.code !== 16 && !err?.message?.includes('PERMISSION_DENIED')) {
+        console.warn('[Site Firestore] Rate limit falhou, fallback em memória:', err?.message || err);
+      }
     }
   }
 
@@ -257,7 +266,7 @@ export function generateSecureRequestId(): string {
  * Validação de token de verificação humana (Cloudflare Turnstile ou Google reCAPTCHA)
  */
 async function verifyAntiSpamCaptcha(token: string, clientIp?: string): Promise<boolean> {
-  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY;
+  const turnstileSecret = process.env.TURNSTILE_SECRET_KEY || '';
   const recaptchaSecret = process.env.RECAPTCHA_SECRET_KEY;
 
   if (!turnstileSecret && !recaptchaSecret) {

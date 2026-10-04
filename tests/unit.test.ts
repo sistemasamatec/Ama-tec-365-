@@ -182,13 +182,15 @@ assert.ok(washingMachineHtml.includes('drena') || washingMachineHtml.includes('d
 console.log('✅ Páginas de serviços validadas: 100% do conteúdo visível sem necessidade de JavaScript.');
 
 // 8. Teste de Autenticação Segura & Proteção Contra Força Bruta
-console.log('\n8. Testando autenticação segura (PBKDF2), sessões e proteção contra força bruta...');
+console.log('\n8. Testando autenticação segura (PBKDF2), bootstrap por variáveis de ambiente e sessões...');
+import crypto from 'crypto';
 import {
   initDefaultAdminUser,
   authenticateAdmin,
   verifyPassword,
   validateSessionToken,
   destroySession,
+  changeAdminPassword,
   saveServiceToDb,
   getAllServicesFromDb,
   archiveServiceInDb,
@@ -200,24 +202,54 @@ import {
   recordSuccessfulLogin,
 } from '../src/lib/server-storage';
 
+// 8.1 Validação de bootstrap sem variáveis de ambiente: não deve criar admin se não configurado
+const originalBootstrapEmail = process.env.AMATEC_ADMIN_BOOTSTRAP_EMAIL;
+const originalBootstrapPassword = process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD;
+delete process.env.AMATEC_ADMIN_BOOTSTRAP_EMAIL;
+delete process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD;
+
+// 8.2 Validação de configuração incompleta (apenas uma variável definida)
+process.env.AMATEC_ADMIN_BOOTSTRAP_EMAIL = 'admin-teste-bootstrap@amatec.ao';
+assert.throws(
+  () => initDefaultAdminUser(),
+  /AMATEC_ADMIN_BOOTSTRAP_PASSWORD/,
+  'Deve falhar de forma segura quando falta a password de bootstrap'
+);
+
+// 8.3 Validação de tamanho mínimo da password de bootstrap (mínimo 16 caracteres)
+process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD = 'curta';
+assert.throws(
+  () => initDefaultAdminUser(),
+  /16 caracteres/,
+  'Deve rejeitar passwords de bootstrap com menos de 16 caracteres'
+);
+
+// 8.4 Bootstrap com credenciais completas e fortes
+const validBootstrapPassword = crypto.randomBytes(24).toString('hex');
+process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD = validBootstrapPassword;
 const admin = initDefaultAdminUser();
-assert.ok(admin, 'Administrador padrão deve existir');
+assert.ok(admin, 'Administrador deve ser criado via bootstrap');
+assert.strictEqual(admin.email, 'admin-teste-bootstrap@amatec.ao');
 assert.ok(admin.passwordSalt, 'Administrador deve ter salt');
 assert.ok(admin.passwordHash, 'Administrador deve ter hash criptográfico');
-assert.notStrictEqual(admin.passwordHash, 'AmaTec#2026!Golf2', 'Palavra-passe NUNCA deve ser guardada em texto simples');
+assert.notStrictEqual(admin.passwordHash, validBootstrapPassword, 'Palavra-passe NUNCA deve ser guardada em texto simples');
+
+// 8.5 Não recriação em execuções subsequentes
+const adminSecondCall = initDefaultAdminUser();
+assert.strictEqual(adminSecondCall?.id, admin.id, 'Execução subsequente não deve recriar o administrador');
 
 // Limpa eventuais tentativas de execuções de testes anteriores
 recordSuccessfulLogin(admin.email);
 recordSuccessfulLogin('192.168.1.100');
 
 // Teste de comparação de hash
-const passValid = verifyPassword('AmaTec#2026!Golf2', admin.passwordSalt, admin.passwordHash);
+const passValid = verifyPassword(validBootstrapPassword, admin.passwordSalt, admin.passwordHash);
 assert.strictEqual(passValid, true, 'Palavra-passe correta deve validar');
 const passInvalid = verifyPassword('PalavraErrada123', admin.passwordSalt, admin.passwordHash);
 assert.strictEqual(passInvalid, false, 'Palavra-passe errada deve falhar');
 
 // Teste de autenticação e criação de sessão
-const authResult = authenticateAdmin(admin.email, 'AmaTec#2026!Golf2', '192.168.1.100');
+const authResult = authenticateAdmin(admin.email, validBootstrapPassword, '192.168.1.100');
 assert.strictEqual(authResult.success, true, 'Autenticação com credenciais corretas deve ter sucesso');
 assert.ok(authResult.session?.token, 'Deve gerar token de sessão');
 
@@ -225,22 +257,37 @@ const validatedSession = validateSessionToken(authResult.session?.token);
 assert.ok(validatedSession, 'Sessão gerada deve ser válida');
 assert.strictEqual(validatedSession?.userId, admin.id);
 
-destroySession(authResult.session?.token);
-assert.strictEqual(validateSessionToken(authResult.session?.token), null, 'Sessão destruída não pode ser válida');
+// 8.6 Teste de invalidação de sessões na alteração de palavra-passe
+const newTestPassword = crypto.randomBytes(24).toString('hex');
+const changePassRes = changeAdminPassword(admin.id, validBootstrapPassword, newTestPassword, admin.email, '192.168.1.100');
+assert.strictEqual(changePassRes.success, true, 'Alteração de palavra-passe deve suceder');
+assert.strictEqual(
+  validateSessionToken(authResult.session?.token),
+  null,
+  'Sessão anterior DEVE ser invalidada após alteração de palavra-passe'
+);
+
+// Nova sessão com nova password
+const newAuthResult = authenticateAdmin(admin.email, newTestPassword, '192.168.1.100');
+assert.strictEqual(newAuthResult.success, true, 'Login com a nova palavra-passe deve suceder');
+destroySession(newAuthResult.session?.token);
+assert.strictEqual(validateSessionToken(newAuthResult.session?.token), null, 'Sessão destruída não pode ser válida');
 
 // Teste de bloqueio por força bruta (5 tentativas falhadas consecutivas)
 const bruteIp = '10.99.99.99';
 for (let i = 0; i < 5; i++) {
   authenticateAdmin(admin.email, 'tentativa-falhada-errada', bruteIp);
 }
-const bruteResult = authenticateAdmin(admin.email, 'AmaTec#2026!Golf2', bruteIp);
+const bruteResult = authenticateAdmin(admin.email, newTestPassword, bruteIp);
 assert.strictEqual(bruteResult.success, false, 'Tentativa após 5 falhas consecutivas deve ser bloqueada');
 assert.ok(bruteResult.error?.includes('bloqueado'), 'Mensagem de bloqueio deve ser informada');
 
-// Limpa registos de teste
+// Limpa registos de teste e restaura ambiente
 recordSuccessfulLogin(admin.email);
 recordSuccessfulLogin(bruteIp);
-console.log('✅ Autenticação PBKDF2 e proteção contra força bruta validadas.');
+if (originalBootstrapEmail) process.env.AMATEC_ADMIN_BOOTSTRAP_EMAIL = originalBootstrapEmail;
+if (originalBootstrapPassword) process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD = originalBootstrapPassword;
+console.log('✅ Autenticação PBKDF2, bootstrap seguro e proteção contra força bruta validados.');
 
 // 9. Teste de CRUD de Serviços na Base de Dados
 console.log('\n9. Testando CRUD completo de serviços em base de dados real...');

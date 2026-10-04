@@ -17,12 +17,12 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
 
   // Logo oficial em settings ou fallback padrão
   const customLogoUrl = settings.visualIdentity?.logoUrl?.trim();
-  const defaultLogo = variant === 'footer' ? '/brand/logo-light.svg' : '/brand/logo.svg';
+  const defaultLogo = variant === 'footer' || variant === 'navbar' ? '/brand/logo-light.svg' : '/brand/logo.svg';
   const logoSrc = (!hasError && customLogoUrl) ? customLogoUrl : defaultLogo;
 
   // Fallback em texto elegante caso o ficheiro de imagem falhe ou demore a carregar
   if (hasError) {
-    if (variant === 'footer') {
+    if (variant === 'footer' || variant === 'navbar') {
       return (
         <div className={`flex items-center gap-2.5 font-bold tracking-tight ${className}`}>
           <div className="w-8 h-8 rounded-lg bg-sky-500/20 border border-sky-400/30 flex items-center justify-center text-sky-400 font-black text-sm">

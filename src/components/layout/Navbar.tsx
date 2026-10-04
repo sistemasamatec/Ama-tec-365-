@@ -157,10 +157,10 @@ export const Navbar: React.FC = () => {
   return (
     <header
       ref={headerRef}
-      className={`sticky top-0 z-40 relative transition-all duration-200 bg-white ${
+      className={`sticky top-0 z-40 relative transition-all duration-200 bg-[#0B1220] ${
         isScrolled
-          ? 'shadow-md border-b border-slate-200 bg-white'
-          : 'border-b border-slate-200 bg-white'
+          ? 'shadow-lg border-b border-[#111B2E] bg-[#0B1220]'
+          : 'border-b border-[#111B2E] bg-[#0B1220]'
       }`}
     >
       {/* 1. Barra de Topo com dados NAP Oficiais (Desktop) */}
@@ -232,15 +232,15 @@ export const Navbar: React.FC = () => {
           {/* Navegação Principal Desktop (≥1024px) */}
           <nav
             aria-label="Navegação principal"
-            className="hidden lg:flex items-center gap-0.5 xl:gap-1.5 text-xs xl:text-sm font-medium text-slate-700"
+            className="hidden lg:flex items-center gap-1 xl:gap-2 text-[14px] font-medium text-[#E6EDF7]"
           >
             {/* 1. Início */}
             <Link
               to="/"
-              className={`px-2 xl:px-3 py-2 rounded-lg transition-colors hover:text-sky-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-sky-500 whitespace-nowrap ${
+              className={`px-3 py-2 rounded-[10px] text-[14px] transition-colors hover:text-[#0EA5E9] hover:bg-[#111B2E] focus-visible:ring-2 focus-visible:ring-[#0EA5E9] whitespace-nowrap ${
                 location.pathname === '/'
-                  ? 'text-sky-600 font-semibold bg-sky-50'
-                  : ''
+                  ? 'text-[#0EA5E9] font-semibold bg-[#111B2E]'
+                  : 'text-[#E6EDF7]'
               }`}
             >
               Início
@@ -261,16 +261,16 @@ export const Navbar: React.FC = () => {
                 aria-haspopup="true"
                 aria-controls="desktop-services-megamenu"
                 aria-label="Menu de Serviços — expandir catálogo"
-                className={`inline-flex items-center gap-1 xl:gap-1.5 px-2 xl:px-3 py-2 rounded-lg transition-colors hover:text-sky-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-sky-500 whitespace-nowrap ${
+                className={`inline-flex items-center gap-1.5 px-3 py-2 rounded-[10px] text-[14px] transition-colors hover:text-[#0EA5E9] hover:bg-[#111B2E] focus-visible:ring-2 focus-visible:ring-[#0EA5E9] whitespace-nowrap cursor-pointer ${
                   isActive('/servicos') || megaMenuOpen
-                    ? 'text-sky-600 font-semibold bg-sky-50'
-                    : ''
+                    ? 'text-[#0EA5E9] font-semibold bg-[#111B2E]'
+                    : 'text-[#E6EDF7]'
                 }`}
               >
                 <span>Serviços</span>
                 <ChevronDown
-                  className={`w-3.5 h-3.5 xl:w-4 xl:h-4 transition-transform duration-200 ${
-                    megaMenuOpen ? 'rotate-180 text-sky-600' : 'text-slate-400'
+                  className={`w-4 h-4 transition-transform duration-200 ${
+                    megaMenuOpen ? 'rotate-180 text-[#0EA5E9]' : 'text-slate-400'
                   }`}
                   aria-hidden="true"
                 />
@@ -371,10 +371,10 @@ export const Navbar: React.FC = () => {
             {/* 3. Equipamentos */}
             <Link
               to="/equipamentos"
-              className={`px-2 xl:px-3 py-2 rounded-lg transition-colors hover:text-sky-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-sky-500 whitespace-nowrap ${
+              className={`px-3 py-2 rounded-[10px] text-[14px] transition-colors hover:text-[#0EA5E9] hover:bg-[#111B2E] focus-visible:ring-2 focus-visible:ring-[#0EA5E9] whitespace-nowrap ${
                 isActive('/equipamentos')
-                  ? 'text-sky-600 font-semibold bg-sky-50'
-                  : ''
+                  ? 'text-[#0EA5E9] font-semibold bg-[#111B2E]'
+                  : 'text-[#E6EDF7]'
               }`}
             >
               Equipamentos
@@ -383,10 +383,10 @@ export const Navbar: React.FC = () => {
             {/* 4. Galeria */}
             <Link
               to="/galeria"
-              className={`px-2 xl:px-3 py-2 rounded-lg transition-colors hover:text-sky-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-sky-500 whitespace-nowrap ${
+              className={`px-3 py-2 rounded-[10px] text-[14px] transition-colors hover:text-[#0EA5E9] hover:bg-[#111B2E] focus-visible:ring-2 focus-visible:ring-[#0EA5E9] whitespace-nowrap ${
                 isActive('/galeria')
-                  ? 'text-sky-600 font-semibold bg-sky-50'
-                  : ''
+                  ? 'text-[#0EA5E9] font-semibold bg-[#111B2E]'
+                  : 'text-[#E6EDF7]'
               }`}
             >
               Galeria
@@ -395,10 +395,10 @@ export const Navbar: React.FC = () => {
             {/* 5. Sobre */}
             <Link
               to="/sobre"
-              className={`px-2 xl:px-3 py-2 rounded-lg transition-colors hover:text-sky-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-sky-500 whitespace-nowrap ${
+              className={`px-3 py-2 rounded-[10px] text-[14px] transition-colors hover:text-[#0EA5E9] hover:bg-[#111B2E] focus-visible:ring-2 focus-visible:ring-[#0EA5E9] whitespace-nowrap ${
                 isActive('/sobre')
-                  ? 'text-sky-600 font-semibold bg-sky-50'
-                  : ''
+                  ? 'text-[#0EA5E9] font-semibold bg-[#111B2E]'
+                  : 'text-[#E6EDF7]'
               }`}
             >
               Sobre
@@ -407,10 +407,10 @@ export const Navbar: React.FC = () => {
             {/* 6. Como Funciona */}
             <Link
               to="/como-funciona"
-              className={`px-2 xl:px-3 py-2 rounded-lg transition-colors hover:text-sky-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-sky-500 whitespace-nowrap ${
+              className={`px-3 py-2 rounded-[10px] text-[14px] transition-colors hover:text-[#0EA5E9] hover:bg-[#111B2E] focus-visible:ring-2 focus-visible:ring-[#0EA5E9] whitespace-nowrap ${
                 isActive('/como-funciona')
-                  ? 'text-sky-600 font-semibold bg-sky-50'
-                  : ''
+                  ? 'text-[#0EA5E9] font-semibold bg-[#111B2E]'
+                  : 'text-[#E6EDF7]'
               }`}
             >
               Como Funciona
@@ -419,10 +419,10 @@ export const Navbar: React.FC = () => {
             {/* 7. Contactos */}
             <Link
               to="/contactos"
-              className={`px-2 xl:px-3 py-2 rounded-lg transition-colors hover:text-sky-600 hover:bg-slate-50 focus-visible:ring-2 focus-visible:ring-sky-500 whitespace-nowrap ${
+              className={`px-3 py-2 rounded-[10px] text-[14px] transition-colors hover:text-[#0EA5E9] hover:bg-[#111B2E] focus-visible:ring-2 focus-visible:ring-[#0EA5E9] whitespace-nowrap ${
                 isActive('/contactos')
-                  ? 'text-sky-600 font-semibold bg-sky-50'
-                  : ''
+                  ? 'text-[#0EA5E9] font-semibold bg-[#111B2E]'
+                  : 'text-[#E6EDF7]'
               }`}
             >
               Contactos
@@ -437,7 +437,7 @@ export const Navbar: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => track('whatsapp_click', { source: 'nav_button' })}
-              className="hidden xl:inline-flex items-center gap-2 min-h-[48px] px-4 py-2.5 rounded-[10px] text-white bg-[#059669] hover:bg-[#10B981] text-[14px] font-semibold transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[#10B981] focus-visible:outline-none"
+              className="hidden xl:inline-flex items-center gap-2 min-h-[48px] px-4 py-2.5 rounded-[10px] text-white bg-[#059669] hover:bg-[#10B981] text-[14px] font-semibold transition-all whitespace-nowrap focus-visible:ring-2 focus-visible:ring-[#10B981] focus-visible:outline-none cursor-pointer"
             >
               <MessageSquare className="w-4 h-4 text-white" />
               <span>WhatsApp</span>
@@ -447,7 +447,7 @@ export const Navbar: React.FC = () => {
             <Link
               to="/solicitar-assistencia"
               onClick={() => track('conversion', { step: 'nav_cta_click' })}
-              className="inline-flex items-center gap-2 min-h-[48px] px-3.5 sm:px-5 py-2.5 rounded-[10px] bg-[#0284C7] hover:bg-[#0EA5E9] text-white font-semibold text-[14px] sm:text-[15px] transition-all hover:shadow-[0_16px_40px_rgba(2,132,199,0.16)] active:scale-95 shrink-0 focus-visible:ring-2 focus-visible:ring-[#0EA5E9] focus-visible:outline-none whitespace-nowrap"
+              className="inline-flex items-center gap-2 min-h-[48px] px-3.5 sm:px-5 py-2.5 rounded-[10px] bg-[#0284C7] hover:bg-[#0EA5E9] text-white font-semibold text-[14px] sm:text-[15px] transition-all hover:shadow-[0_16px_40px_rgba(2,132,199,0.16)] active:scale-95 shrink-0 focus-visible:ring-2 focus-visible:ring-[#0EA5E9] focus-visible:outline-none whitespace-nowrap cursor-pointer"
               aria-label="Solicitar Assistência Técnica"
             >
               <Wrench className="w-4 h-4 shrink-0" />
@@ -460,71 +460,71 @@ export const Navbar: React.FC = () => {
               ref={mobileButtonRef}
               type="button"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 rounded-lg text-slate-700 hover:text-slate-900 hover:bg-slate-100 focus:outline-none focus:ring-2 focus:ring-sky-500 min-h-[44px] min-w-[44px] flex items-center justify-center"
+              className="lg:hidden p-2 rounded-[10px] text-[#E6EDF7] hover:text-white hover:bg-[#111B2E] focus:outline-none focus:ring-2 focus:ring-[#0EA5E9] min-h-[48px] min-w-[48px] flex items-center justify-center cursor-pointer"
               aria-expanded={mobileMenuOpen}
               aria-label={mobileMenuOpen ? 'Fechar menu de navegação' : 'Abrir menu de navegação'}
             >
               {mobileMenuOpen ? (
-                <X className="w-6 h-6 text-slate-800" />
+                <X className="w-6 h-6 text-[#E6EDF7]" />
               ) : (
-                <Menu className="w-6 h-6 text-slate-800" />
+                <Menu className="w-6 h-6 text-[#E6EDF7]" />
               )}
             </button>
           </div>
         </div>
       </div>
 
-      {/* 3. MENU MOBILE (<1024px): Ecrã Inteiro / Drawer Acordeão */}
+      {/* 3. MENU MOBILE (<1024px): Ecrã Inteiro / Drawer Acordeão em fundo navy */}
       {mobileMenuOpen && (
         <div
           role="dialog"
           aria-modal="true"
           aria-label="Menu de Navegação Móvel"
-          className="lg:hidden fixed inset-x-0 top-20 bottom-0 bg-white z-50 overflow-y-auto border-t border-slate-200 flex flex-col justify-between animate-in fade-in duration-150"
+          className="lg:hidden fixed inset-x-0 top-20 bottom-0 bg-[#0B1220] z-50 overflow-y-auto border-t border-[#111B2E] flex flex-col justify-between animate-in fade-in duration-150"
         >
           <div className="p-4 space-y-2">
-            <nav aria-label="Navegação mobile" className="space-y-1 text-base font-medium text-slate-800">
+            <nav aria-label="Navegação mobile" className="space-y-1 text-base font-medium text-[#E6EDF7]">
               {/* 1. Início */}
               <Link
                 to="/"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between min-h-[44px] px-3.5 py-2.5 rounded-xl transition-colors ${
+                className={`flex items-center justify-between min-h-[48px] px-3.5 py-2.5 rounded-[10px] text-[15px] transition-colors ${
                   location.pathname === '/'
-                    ? 'bg-sky-50 text-sky-700 font-semibold'
-                    : 'hover:bg-slate-50 text-slate-800'
+                    ? 'bg-[#111B2E] text-[#0EA5E9] font-semibold'
+                    : 'hover:bg-[#111B2E] text-[#E6EDF7]'
                 }`}
               >
                 <span>Início</span>
               </Link>
 
               {/* 2. Serviços ▾ (Acordeão por Categoria Técnica) */}
-              <div className="rounded-xl border border-slate-200 overflow-hidden">
+              <div className="rounded-[10px] border border-[#111B2E] overflow-hidden bg-[#060B16]">
                 <button
                   type="button"
                   onClick={() => setMobileServicesExpanded(!mobileServicesExpanded)}
-                  className={`w-full flex items-center justify-between min-h-[48px] px-3.5 py-2.5 text-left transition-colors ${
+                  className={`w-full flex items-center justify-between min-h-[48px] px-3.5 py-2.5 text-left text-[15px] transition-colors ${
                     isActive('/servicos')
-                      ? 'bg-sky-50/70 text-sky-700 font-semibold'
-                      : 'hover:bg-slate-50 text-slate-800'
+                      ? 'bg-[#111B2E] text-[#0EA5E9] font-semibold'
+                      : 'hover:bg-[#111B2E] text-[#E6EDF7]'
                   }`}
                   aria-expanded={mobileServicesExpanded}
                 >
                   <span className="flex items-center gap-2">
                     <span>Serviços</span>
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-sky-100 text-sky-700 font-normal">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-[#111B2E] text-[#0EA5E9] font-normal border border-[#1B2A44]">
                       6 Categorias
                     </span>
                   </span>
                   <ChevronDown
                     className={`w-5 h-5 text-slate-400 transition-transform duration-200 ${
-                      mobileServicesExpanded ? 'rotate-180 text-sky-600' : ''
+                      mobileServicesExpanded ? 'rotate-180 text-[#0EA5E9]' : ''
                     }`}
                   />
                 </button>
 
                 {/* Sub-acordeão das 6 Categorias (1 aberta de cada vez para evitar scroll infinito) */}
                 {mobileServicesExpanded && (
-                  <div className="bg-slate-50/50 border-t border-slate-200 divide-y divide-slate-200/80">
+                  <div className="bg-[#0B1220] border-t border-[#111B2E] divide-y divide-[#111B2E]">
                     {CATEGORIES_CONFIG.map((cat) => {
                       const isCatOpen = openMobileCat === cat.id;
                       const catServices = getCategoryServices(cat.id);
@@ -534,7 +534,7 @@ export const Navbar: React.FC = () => {
                           <button
                             type="button"
                             onClick={() => toggleMobileCat(cat.id)}
-                            className="w-full flex items-center justify-between min-h-[44px] px-4 py-2.5 text-xs font-semibold text-slate-700 hover:text-sky-600 hover:bg-slate-100 transition-colors uppercase tracking-wider"
+                            className="w-full flex items-center justify-between min-h-[48px] px-4 py-2.5 text-xs font-semibold text-[#CBD5E1] hover:text-[#0EA5E9] hover:bg-[#111B2E] transition-colors uppercase tracking-wider"
                             aria-expanded={isCatOpen}
                           >
                             <span className="flex items-center gap-2">
@@ -542,29 +542,29 @@ export const Navbar: React.FC = () => {
                                 {cat.icon}
                               </span>
                               <span>{cat.name}</span>
-                              <span className="text-[10px] text-slate-400 font-normal">
+                              <span className="text-[11px] text-slate-400 font-normal">
                                 ({catServices.length})
                               </span>
                             </span>
                             <ChevronRight
                               className={`w-4 h-4 text-slate-400 transition-transform duration-200 ${
-                                isCatOpen ? 'rotate-90 text-sky-600' : ''
+                                isCatOpen ? 'rotate-90 text-[#0EA5E9]' : ''
                               }`}
                             />
                           </button>
 
                           {/* Lista de Serviços Expandida da Categoria Atual */}
                           {isCatOpen && (
-                            <ul className="bg-white px-3 py-2 space-y-1 border-t border-slate-200/60 animate-in fade-in duration-100">
+                            <ul className="bg-[#060B16] px-3 py-2 space-y-1 border-t border-[#111B2E] animate-in fade-in duration-100">
                               {catServices.map((srv) => (
                                 <li key={srv.id || srv.slug}>
                                   <Link
                                     to={`/servicos/${srv.slug}`}
                                     onClick={() => setMobileMenuOpen(false)}
-                                    className={`flex items-center min-h-[44px] px-3 py-2 rounded-lg text-sm transition-colors ${
+                                    className={`flex items-center min-h-[44px] px-3 py-2 rounded-[8px] text-[14px] transition-colors ${
                                       location.pathname === `/servicos/${srv.slug}`
-                                        ? 'text-sky-600 font-semibold bg-sky-50'
-                                        : 'text-slate-600 hover:text-sky-600 hover:bg-slate-50'
+                                        ? 'text-[#0EA5E9] font-semibold bg-[#111B2E]'
+                                        : 'text-[#CBD5E1] hover:text-[#0EA5E9] hover:bg-[#111B2E]'
                                     }`}
                                   >
                                     <span>{srv.menuLabel || srv.name}</span>
@@ -583,11 +583,11 @@ export const Navbar: React.FC = () => {
                     })}
 
                     {/* Rodapé do Acordeão Mobile */}
-                    <div className="p-3 bg-white space-y-2">
+                    <div className="p-3 bg-[#060B16] space-y-2">
                       <Link
                         to="/servicos"
                         onClick={() => setMobileMenuOpen(false)}
-                        className="flex items-center justify-between min-h-[44px] px-3 py-2 text-xs font-semibold text-sky-600 hover:text-sky-800 rounded-lg hover:bg-sky-50"
+                        className="flex items-center justify-between min-h-[48px] px-3 py-2 text-[14px] font-semibold text-[#0EA5E9] hover:text-[#38BDF8] rounded-[10px] hover:bg-[#111B2E]"
                       >
                         <span>Ver catálogo completo de serviços</span>
                         <ArrowRight className="w-4 h-4" />
@@ -600,9 +600,9 @@ export const Navbar: React.FC = () => {
                           track('whatsapp_click', { source: 'mobile_megamenu_not_found' });
                           setMobileMenuOpen(false);
                         }}
-                        className="flex items-center gap-2 min-h-[44px] px-3 py-2 text-xs font-medium text-emerald-800 bg-emerald-50 rounded-lg border border-emerald-200"
+                        className="flex items-center gap-2 min-h-[48px] px-3 py-2 text-[14px] font-medium text-[#10B981] bg-[#111B2E] rounded-[10px] border border-[#059669]/40"
                       >
-                        <MessageSquare className="w-4 h-4 text-emerald-600 shrink-0" />
+                        <MessageSquare className="w-4 h-4 text-[#10B981] shrink-0" />
                         <span>Não encontrou o seu equipamento? WhatsApp &rarr;</span>
                       </a>
                     </div>
@@ -614,10 +614,10 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/equipamentos"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between min-h-[44px] px-3.5 py-2.5 rounded-xl transition-colors ${
+                className={`flex items-center justify-between min-h-[48px] px-3.5 py-2.5 rounded-[10px] text-[15px] transition-colors ${
                   isActive('/equipamentos')
-                    ? 'bg-sky-50 text-sky-700 font-semibold'
-                    : 'hover:bg-slate-50 text-slate-800'
+                    ? 'bg-[#111B2E] text-[#0EA5E9] font-semibold'
+                    : 'hover:bg-[#111B2E] text-[#E6EDF7]'
                 }`}
               >
                 <span>Equipamentos</span>
@@ -627,10 +627,10 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/galeria"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between min-h-[44px] px-3.5 py-2.5 rounded-xl transition-colors ${
+                className={`flex items-center justify-between min-h-[48px] px-3.5 py-2.5 rounded-[10px] text-[15px] transition-colors ${
                   isActive('/galeria')
-                    ? 'bg-sky-50 text-sky-700 font-semibold'
-                    : 'hover:bg-slate-50 text-slate-800'
+                    ? 'bg-[#111B2E] text-[#0EA5E9] font-semibold'
+                    : 'hover:bg-[#111B2E] text-[#E6EDF7]'
                 }`}
               >
                 <span>Galeria</span>
@@ -640,10 +640,10 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/sobre"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between min-h-[44px] px-3.5 py-2.5 rounded-xl transition-colors ${
+                className={`flex items-center justify-between min-h-[48px] px-3.5 py-2.5 rounded-[10px] text-[15px] transition-colors ${
                   isActive('/sobre')
-                    ? 'bg-sky-50 text-sky-700 font-semibold'
-                    : 'hover:bg-slate-50 text-slate-800'
+                    ? 'bg-[#111B2E] text-[#0EA5E9] font-semibold'
+                    : 'hover:bg-[#111B2E] text-[#E6EDF7]'
                 }`}
               >
                 <span>Sobre</span>
@@ -653,10 +653,10 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/como-funciona"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between min-h-[44px] px-3.5 py-2.5 rounded-xl transition-colors ${
+                className={`flex items-center justify-between min-h-[48px] px-3.5 py-2.5 rounded-[10px] text-[15px] transition-colors ${
                   isActive('/como-funciona')
-                    ? 'bg-sky-50 text-sky-700 font-semibold'
-                    : 'hover:bg-slate-50 text-slate-800'
+                    ? 'bg-[#111B2E] text-[#0EA5E9] font-semibold'
+                    : 'hover:bg-[#111B2E] text-[#E6EDF7]'
                 }`}
               >
                 <span>Como Funciona</span>
@@ -666,10 +666,10 @@ export const Navbar: React.FC = () => {
               <Link
                 to="/contactos"
                 onClick={() => setMobileMenuOpen(false)}
-                className={`flex items-center justify-between min-h-[44px] px-3.5 py-2.5 rounded-xl transition-colors ${
+                className={`flex items-center justify-between min-h-[48px] px-3.5 py-2.5 rounded-[10px] text-[15px] transition-colors ${
                   isActive('/contactos')
-                    ? 'bg-sky-50 text-sky-700 font-semibold'
-                    : 'hover:bg-slate-50 text-slate-800'
+                    ? 'bg-[#111B2E] text-[#0EA5E9] font-semibold'
+                    : 'hover:bg-[#111B2E] text-[#E6EDF7]'
                 }`}
               >
                 <span>Contactos</span>
@@ -678,14 +678,14 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* Ações Inferiores do Menu Mobile */}
-          <div className="p-4 border-t border-slate-200 bg-slate-50 space-y-2.5 shrink-0">
+          <div className="p-4 border-t border-[#111B2E] bg-[#060B16] space-y-2.5 shrink-0">
             <Link
               to="/solicitar-assistencia"
               onClick={() => {
                 track('conversion', { step: 'mobile_menu_cta' });
                 setMobileMenuOpen(false);
               }}
-              className="w-full min-h-[48px] py-3 bg-sky-600 hover:bg-sky-700 text-white rounded-xl text-center font-medium text-sm flex items-center justify-center gap-2 shadow-sm transition-colors active:scale-98"
+              className="w-full min-h-[48px] py-3 bg-[#0284C7] hover:bg-[#0EA5E9] text-white rounded-[10px] text-center font-semibold text-[15px] flex items-center justify-center gap-2 shadow-sm transition-colors active:scale-98"
             >
               <Wrench className="w-4 h-4" />
               <span>Solicitar Assistência Técnica</span>
@@ -700,9 +700,9 @@ export const Navbar: React.FC = () => {
                   track('client_portal_mobile_click');
                   setMobileMenuOpen(false);
                 }}
-                className="w-full min-h-[44px] py-2.5 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 rounded-xl text-center font-medium text-sm flex items-center justify-center gap-2 transition-colors active:scale-98"
+                className="w-full min-h-[48px] py-2.5 bg-[#111B2E] hover:bg-[#1B2A44] text-[#E6EDF7] border border-[#1B2A44] rounded-[10px] text-center font-medium text-[14px] flex items-center justify-center gap-2 transition-colors active:scale-98"
               >
-                <ExternalLink className="w-4 h-4 text-sky-600" />
+                <ExternalLink className="w-4 h-4 text-[#0EA5E9]" />
                 <span>Consultar minha assistência</span>
               </a>
             ) : null}
@@ -715,13 +715,13 @@ export const Navbar: React.FC = () => {
                 track('whatsapp_click', { source: 'mobile_menu_direct' });
                 setMobileMenuOpen(false);
               }}
-              className="w-full min-h-[48px] py-3 bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl text-center font-medium text-sm flex items-center justify-center gap-2 transition-colors active:scale-98"
+              className="w-full min-h-[48px] py-3 bg-[#059669] hover:bg-[#10B981] text-white rounded-[10px] text-center font-semibold text-[15px] flex items-center justify-center gap-2 transition-colors active:scale-98"
             >
               <MessageSquare className="w-4 h-4" />
               <span>Falar no WhatsApp ({company.whatsappDisplay})</span>
             </a>
 
-            <div className="pt-2 text-center text-xs text-slate-500">
+            <div className="pt-2 text-center text-[14px] text-slate-400">
               <span>Oficina no Golf 2, Luanda · Bancada Técnica Especializada</span>
             </div>
           </div>

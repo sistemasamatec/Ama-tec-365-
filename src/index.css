@@ -17,7 +17,7 @@
   --color-surface-alt: #F4F7FA;
 
   --color-text-main: #0F172A;
-  --color-text-muted: #475569;
+  --color-text-secondary: #475569;
   --color-text-navy: #E6EDF7;
   --color-border-subtle: #E2E8F0;
 
@@ -45,15 +45,18 @@
     width: 100%;
     color: var(--color-text-main);
     background-color: var(--color-surface-white);
+    font-size: 16px;
+    font-family: var(--font-sans);
   }
 
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
     letter-spacing: -0.02em;
+    color: var(--color-text-main);
   }
 
-  /* Previne texto abaixo de 14px no site para conformidade WCAG AA */
-  p, span, label, input, select, textarea, button, a {
+  /* Previne texto abaixo de 14px em todo o site para conformidade estrita WCAG AA */
+  p, span, label, input, select, textarea, button, a, li, th, td {
     font-size: max(14px, 1em);
   }
 
@@ -68,7 +71,53 @@
   }
 }
 
-/* Tokens de botões e cartões uniformizados */
+/* Escala tipográfica padronizada */
+.text-display {
+  font-family: var(--font-heading);
+  font-size: clamp(2.25rem, 5vw, 3.5rem);
+  line-height: 1.15;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+}
+
+.text-h1 {
+  font-family: var(--font-heading);
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.text-h2 {
+  font-family: var(--font-heading);
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.25;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.text-h3 {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
+.text-body {
+  font-family: var(--font-sans);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.font-heading {
+  font-family: var(--font-heading);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+/* 1. Botão Primário (só CTAs com cyan-600 / hover cyan-500) */
 .btn-primary {
   display: inline-flex;
   align-items: center;
@@ -79,21 +128,25 @@
   border-radius: var(--radius-btn);
   background-color: var(--color-cyan-600);
   color: #FFFFFF;
+  font-family: var(--font-sans);
   font-weight: 600;
   font-size: 15px;
   line-height: 1.25;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
   border: 1px solid transparent;
+  text-decoration: none;
 }
 .btn-primary:hover {
   background-color: var(--color-cyan-500);
+  box-shadow: 0 4px 14px rgba(2, 132, 199, 0.25);
 }
 .btn-primary:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--color-cyan-500);
 }
 
+/* 2. Botão de Contorno Claro (fundo claro) */
 .btn-outline {
   display: inline-flex;
   align-items: center;
@@ -105,11 +158,13 @@
   background-color: transparent;
   color: var(--color-text-main);
   border: 1.5px solid var(--color-border-subtle);
+  font-family: var(--font-sans);
   font-weight: 600;
   font-size: 15px;
   line-height: 1.25;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
+  text-decoration: none;
 }
 .btn-outline:hover {
   background-color: var(--color-surface-alt);
@@ -121,6 +176,37 @@
   box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--color-cyan-500);
 }
 
+/* 2b. Botão de Contorno Navy (para uso sobre fundo navy do Hero/Rodapé) */
+.btn-outline-navy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-btn);
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--color-text-navy);
+  border: 1.5px solid var(--color-navy-700);
+  font-family: var(--font-sans);
+  font-weight: 600;
+  font-size: 15px;
+  line-height: 1.25;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-outline-navy:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+  border-color: var(--color-cyan-500);
+  color: #FFFFFF;
+}
+.btn-outline-navy:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--color-navy-900), 0 0 0 4px var(--color-cyan-500);
+}
+
+/* 3. Botão WhatsApp (verde-600 / hover verde-500) */
 .btn-whatsapp {
   display: inline-flex;
   align-items: center;
@@ -131,21 +217,25 @@
   border-radius: var(--radius-btn);
   background-color: var(--color-verde-600);
   color: #FFFFFF;
+  font-family: var(--font-sans);
   font-weight: 600;
   font-size: 15px;
   line-height: 1.25;
   transition: all 0.2s ease-in-out;
   cursor: pointer;
   border: 1px solid transparent;
+  text-decoration: none;
 }
 .btn-whatsapp:hover {
   background-color: var(--color-verde-500);
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.25);
 }
 .btn-whatsapp:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px #FFFFFF, 0 0 0 4px var(--color-verde-500);
 }
 
+/* Cards Uniformizados */
 .card-base {
   background-color: var(--color-surface-white);
   border: 1px solid var(--color-border-subtle);
@@ -157,6 +247,12 @@
   border-color: #BAE6FD;
 }
 
+/* Imagens com radius do token */
+.img-rounded {
+  border-radius: var(--radius-img);
+}
+
+/* Layouts e Secções */
 .app-container {
   max-width: 1200px;
   margin-left: auto;

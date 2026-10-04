@@ -27,6 +27,14 @@ export default defineConfig(() => {
         '@': path.resolve(__dirname, '.'),
       },
     },
+    define: {
+      'import.meta.env.VITE_FIREBASE_PROJECT_ID': JSON.stringify(
+        process.env.FIREBASE_PROJECT_ID || '5e6776003cafad3b31f1ef1cadf6b32b39dcda69'
+      ),
+      'import.meta.env.VITE_FIREBASE_API_KEY': JSON.stringify(
+        process.env.FIREBASE_API_KEY || process.env.VITE_FIREBASE_API_KEY || ''
+      ),
+    },
     server: {
       headers: {
         'X-Content-Type-Options': 'nosniff',

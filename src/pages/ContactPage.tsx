@@ -31,16 +31,16 @@ export const ContactPage: React.FC = () => {
   const wazeLink = `https://waze.com/ul?ll=${settings.googleMaps?.coordinates?.lat || -8.8893},${settings.googleMaps?.coordinates?.lng || 13.2384}&navigate=yes`;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-16">
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 space-y-16">
       {/* Header */}
       <div className="max-w-3xl space-y-3">
-        <div className="text-xs font-semibold text-sky-600 uppercase tracking-wider">
+        <div className="text-[14px] font-semibold text-[#0284C7] uppercase tracking-wider">
           Canais Oficiais
         </div>
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-h1 font-heading font-extrabold text-[#060B16] tracking-tight">
           Contactos & Localização
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+        <p className="text-[16px] text-[#475569] leading-relaxed">
           Estamos localizados em Luanda, no Golf 2 (Rua dos Príncipes). Contacte a nossa equipa para dúvidas sobre avarias, orçamentos ou para agendar a entrega do seu equipamento.
         </p>
       </div>
@@ -49,69 +49,69 @@ export const ContactPage: React.FC = () => {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Column: Official Info */}
         <div className="lg:col-span-5 space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 space-y-6 shadow-xs">
-            <h2 className="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3 flex items-center justify-between">
+          <div className="card-base bg-white p-6 sm:p-8 space-y-6 shadow-xs">
+            <h2 className="text-lg font-bold font-heading text-[#060B16] border-b border-[#E2E8F0] pb-3 flex items-center justify-between">
               <span>Informações Oficiais</span>
-              <span className="text-[11px] font-normal text-slate-500">NIF: {company.nif}</span>
+              <span className="text-[14px] font-normal text-[#475569]">NIF: {company.nif}</span>
             </h2>
 
-            <div className="space-y-4 text-xs sm:text-sm">
+            <div className="space-y-4 text-[14px]">
               {/* Morada */}
               <div className="flex items-start justify-between gap-3">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-sky-50 text-sky-600 shrink-0">
+                  <div className="p-2 rounded-[10px] bg-sky-50 text-[#0284C7] shrink-0">
                     <MapPin className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-semibold text-slate-900 block">Morada da Oficina</span>
-                    <p className="text-slate-600">{company.address}</p>
-                    <p className="text-slate-500 text-xs">{company.city}, {company.country}</p>
+                    <span className="font-semibold text-[#0F172A] block">Morada da Oficina</span>
+                    <p className="text-[#475569]">{company.address}</p>
+                    <p className="text-[#475569] text-[14px]">{company.city}, {company.country}</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => copyToClipboard(`${company.address}, ${company.city}, ${company.country}`, 'morada')}
-                  className="p-1.5 text-slate-400 hover:text-sky-600 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-[#0284C7] rounded-[8px] hover:bg-slate-50 transition-colors"
                   title="Copiar morada"
                 >
-                  {copiedField === 'morada' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  {copiedField === 'morada' ? <Check className="w-4 h-4 text-[#059669]" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
 
               {/* NIF */}
-              <div className="flex items-start justify-between gap-3 pt-2 border-t border-slate-100">
+              <div className="flex items-start justify-between gap-3 pt-2 border-t border-[#E2E8F0]">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-sky-50 text-sky-600 shrink-0">
+                  <div className="p-2 rounded-[10px] bg-sky-50 text-[#0284C7] shrink-0">
                     <Shield className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-semibold text-slate-900 block">NIF da Empresa</span>
-                    <span className="font-mono text-slate-700 text-xs sm:text-sm">{company.nif}</span>
-                    <p className="text-slate-400 text-[11px]">{company.legalName}</p>
+                    <span className="font-semibold text-[#0F172A] block">NIF da Empresa</span>
+                    <span className="font-mono text-[#060B16] text-[14px] font-bold">{company.nif}</span>
+                    <p className="text-[#475569] text-[14px]">{company.legalName}</p>
                   </div>
                 </div>
                 <button
                   type="button"
                   onClick={() => copyToClipboard(company.nif, 'nif')}
-                  className="p-1.5 text-slate-400 hover:text-sky-600 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-[#0284C7] rounded-[8px] hover:bg-slate-50 transition-colors"
                   title="Copiar NIF"
                 >
-                  {copiedField === 'nif' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  {copiedField === 'nif' ? <Check className="w-4 h-4 text-[#059669]" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
 
               {/* Telefone */}
-              <div className="flex items-start justify-between gap-3 pt-2 border-t border-slate-100">
+              <div className="flex items-start justify-between gap-3 pt-2 border-t border-[#E2E8F0]">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-sky-50 text-sky-600 shrink-0">
+                  <div className="p-2 rounded-[10px] bg-sky-50 text-[#0284C7] shrink-0">
                     <Phone className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-semibold text-slate-900 block">Telefone Principal</span>
+                    <span className="font-semibold text-[#0F172A] block">Telefone Principal</span>
                     <a
                       href={`tel:${company.phone}`}
                       onClick={() => track('phone_click', { source: 'contacts_page' })}
-                      className="text-sky-600 hover:underline font-mono text-sm font-medium"
+                      className="text-[#0284C7] hover:underline font-mono text-[14px] font-medium"
                     >
                       {company.phoneDisplay}
                     </a>
@@ -120,27 +120,27 @@ export const ContactPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => copyToClipboard(company.phone, 'telefone')}
-                  className="p-1.5 text-slate-400 hover:text-sky-600 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-[#0284C7] rounded-[8px] hover:bg-slate-50 transition-colors"
                   title="Copiar telefone"
                 >
-                  {copiedField === 'telefone' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  {copiedField === 'telefone' ? <Check className="w-4 h-4 text-[#059669]" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
 
               {/* WhatsApp */}
-              <div className="flex items-start justify-between gap-3 pt-2 border-t border-slate-100">
+              <div className="flex items-start justify-between gap-3 pt-2 border-t border-[#E2E8F0]">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-emerald-50 text-emerald-600 shrink-0">
+                  <div className="p-2 rounded-[10px] bg-emerald-50 text-[#059669] shrink-0">
                     <MessageSquare className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-semibold text-slate-900 block">WhatsApp Técnico</span>
+                    <span className="font-semibold text-[#0F172A] block">WhatsApp Técnico</span>
                     <a
                       href={getGeneralWhatsAppUrl()}
                       target="_blank"
                       rel="noopener noreferrer"
                       onClick={() => track('whatsapp_click', { source: 'contacts_page' })}
-                      className="text-emerald-600 hover:underline font-mono text-sm font-medium"
+                      className="text-[#059669] hover:underline font-mono text-[14px] font-semibold"
                     >
                       {company.whatsappDisplay}
                     </a>
@@ -149,25 +149,25 @@ export const ContactPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => copyToClipboard(company.whatsapp, 'whatsapp')}
-                  className="p-1.5 text-slate-400 hover:text-emerald-600 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-[#059669] rounded-[8px] hover:bg-slate-50 transition-colors"
                   title="Copiar WhatsApp"
                 >
-                  {copiedField === 'whatsapp' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  {copiedField === 'whatsapp' ? <Check className="w-4 h-4 text-[#059669]" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
 
               {/* Email */}
-              <div className="flex items-start justify-between gap-3 pt-2 border-t border-slate-100">
+              <div className="flex items-start justify-between gap-3 pt-2 border-t border-[#E2E8F0]">
                 <div className="flex items-start gap-3">
-                  <div className="p-2 rounded-lg bg-sky-50 text-sky-600 shrink-0">
+                  <div className="p-2 rounded-[10px] bg-sky-50 text-[#0284C7] shrink-0">
                     <Mail className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="font-semibold text-slate-900 block">Email Institucional</span>
+                    <span className="font-semibold text-[#0F172A] block">Email Institucional</span>
                     <a
                       href={`mailto:${company.email}`}
                       onClick={() => track('email_click', { source: 'contacts_page' })}
-                      className="text-sky-600 hover:underline text-xs sm:text-sm"
+                      className="text-[#0284C7] hover:underline text-[14px]"
                     >
                       {company.email}
                     </a>
@@ -176,24 +176,24 @@ export const ContactPage: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => copyToClipboard(company.email, 'email')}
-                  className="p-1.5 text-slate-400 hover:text-sky-600 rounded-lg hover:bg-slate-50 transition-colors"
+                  className="p-1.5 text-slate-400 hover:text-[#0284C7] rounded-[8px] hover:bg-slate-50 transition-colors"
                   title="Copiar email"
                 >
-                  {copiedField === 'email' ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
+                  {copiedField === 'email' ? <Check className="w-4 h-4 text-[#059669]" /> : <Copy className="w-4 h-4" />}
                 </button>
               </div>
 
               {/* Horário de Funcionamento */}
-              <div className="flex items-start gap-3 pt-2 border-t border-slate-100">
-                <div className="p-2 rounded-lg bg-amber-50 text-amber-600 shrink-0">
+              <div className="flex items-start gap-3 pt-2 border-t border-[#E2E8F0]">
+                <div className="p-2 rounded-[10px] bg-amber-50 text-amber-600 shrink-0">
                   <Clock className="w-5 h-5" />
                 </div>
                 <div className="space-y-1">
-                  <span className="font-semibold text-slate-900 block">Horário de Funcionamento</span>
-                  <div className="text-xs text-slate-600 space-y-0.5">
+                  <span className="font-semibold text-[#0F172A] block">Horário de Funcionamento</span>
+                  <div className="text-[14px] text-[#475569] space-y-0.5">
                     <div>{settings.businessHours.weekdays}</div>
                     <div>{settings.businessHours.saturday}</div>
-                    <div className="text-slate-500">{settings.businessHours.sunday}</div>
+                    <div className="text-[#475569]">{settings.businessHours.sunday}</div>
                   </div>
                 </div>
               </div>
@@ -201,17 +201,17 @@ export const ContactPage: React.FC = () => {
           </div>
 
           {/* Mapa Interativo Google Maps & Como Chegar */}
-          <div className="bg-white rounded-2xl border border-slate-200 overflow-hidden shadow-xs space-y-4 p-5">
+          <div className="card-base bg-white overflow-hidden shadow-xs space-y-4 p-5">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 font-bold text-slate-900 text-sm">
-                <Map className="w-4 h-4 text-sky-600" />
+              <div className="flex items-center gap-2 font-bold font-heading text-[#060B16] text-[14px]">
+                <Map className="w-4 h-4 text-[#0284C7]" />
                 <span>Oficina Ama Tec no Golf 2</span>
               </div>
-              <span className="text-[11px] text-slate-500">Luanda, Angola</span>
+              <span className="text-[14px] text-[#475569]">Luanda, Angola</span>
             </div>
 
             {/* Iframe do Google Maps */}
-            <div className="relative w-full h-56 rounded-xl overflow-hidden border border-slate-200 bg-slate-100">
+            <div className="relative w-full h-56 rounded-[12px] overflow-hidden border border-[#E2E8F0] bg-[#F4F7FA]">
               <iframe
                 title="Localização da Ama Tec no Golf 2"
                 src={mapEmbedUrl}
@@ -231,9 +231,9 @@ export const ContactPage: React.FC = () => {
                 href={mapLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white text-xs font-semibold transition-colors shadow-xs"
+                className="btn-primary min-h-[48px] inline-flex items-center justify-center gap-1.5 text-[14px]"
               >
-                <Navigation className="w-3.5 h-3.5" />
+                <Navigation className="w-4 h-4" />
                 <span>Google Maps</span>
               </a>
 
@@ -241,9 +241,9 @@ export const ContactPage: React.FC = () => {
                 href={wazeLink}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-1.5 px-3 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white text-xs font-semibold transition-colors"
+                className="btn-outline min-h-[48px] inline-flex items-center justify-center gap-1.5 text-[14px]"
               >
-                <ExternalLink className="w-3.5 h-3.5" />
+                <ExternalLink className="w-4 h-4" />
                 <span>Abrir no Waze</span>
               </a>
             </div>

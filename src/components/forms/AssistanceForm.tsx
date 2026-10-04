@@ -308,18 +308,18 @@ export const AssistanceForm: React.FC<AssistanceFormProps> = ({
   };
 
   return (
-    <div className={`bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden ${className}`}>
+    <div className={`card-base shadow-xl overflow-hidden bg-white ${className}`}>
       {/* Header */}
-      <div className="bg-slate-900 text-white p-6 sm:p-8 border-b border-slate-800">
+      <div className="bg-[#0B1220] text-white p-6 sm:p-8 border-b border-[#111B2E]">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-sky-500/20 text-sky-400 flex items-center justify-center shrink-0">
+          <div className="w-10 h-10 rounded-[10px] bg-[#0284C7]/20 text-[#0EA5E9] flex items-center justify-center shrink-0">
             <Wrench className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="text-xl sm:text-2xl font-bold tracking-tight text-white">
+            <h3 className="text-xl sm:text-2xl font-bold font-heading tracking-tight text-white">
               Solicitar Assistência Técnica
             </h3>
-            <p className="text-xs sm:text-sm text-slate-300 mt-0.5">
+            <p className="text-[14px] text-[#CBD5E1] mt-0.5">
               Receba diagnóstico da equipa técnica da Ama Tec em Luanda.
             </p>
           </div>
@@ -791,16 +791,16 @@ export const AssistanceForm: React.FC<AssistanceFormProps> = ({
               <button
                 type="submit"
                 disabled={status === 'submitting'}
-                className="w-full py-3.5 px-6 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-sm shadow-md transition-all active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
+                className="w-full btn-primary text-[15px] font-semibold flex items-center justify-center gap-2 disabled:opacity-60 cursor-pointer"
               >
                 {status === 'submitting' ? (
                   <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <Loader2 className="w-5 h-5 animate-spin" />
                     <span>A registar pedido no ERP...</span>
                   </>
                 ) : (
                   <>
-                    <Send className="w-4 h-4" />
+                    <Send className="w-5 h-5" />
                     <span>Submeter Pedido de Assistência Técnica</span>
                   </>
                 )}
@@ -808,8 +808,8 @@ export const AssistanceForm: React.FC<AssistanceFormProps> = ({
             </div>
 
             {/* Privacy footnote */}
-            <div className="flex items-center gap-2 text-[11px] text-slate-400 justify-center pt-1">
-              <Shield className="w-3.5 h-3.5 text-slate-400" />
+            <div className="flex items-center gap-2 text-[14px] text-[#475569] justify-center pt-1">
+              <Shield className="w-4 h-4 text-[#475569]" />
               <span>
                 Os seus dados são tratados exclusivamente pela Ama Tec para fins de contacto técnico.
               </span>

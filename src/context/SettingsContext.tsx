@@ -21,6 +21,7 @@ export interface SiteSettingsData {
   visualIdentity: {
     logoUrl: string;
     brandColor: string;
+    whatsappMessage?: string;
     logoHistory?: { url: string; uploadedAt: string; fileName: string }[];
   };
   socialLinks: {

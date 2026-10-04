@@ -28,28 +28,28 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
   ].filter((s) => Boolean(s.url && s.url.trim()));
 
   return (
-    <footer className="bg-slate-950 text-slate-400 border-t border-slate-800 pb-24">
+    <footer className="bg-[#060B16] text-[#CBD5E1] border-t border-[#111B2E] pb-24">
       {/* Upper Main Footer */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10">
           {/* Column 1: Brand & NAP */}
           <div className="lg:col-span-2 space-y-4">
-            <Link to="/" className="inline-block">
+            <Link to="/" className="inline-block" aria-label="Ama Tec — Início">
               <BrandLogo variant="footer" />
             </Link>
-            <p className="text-sm text-slate-300 leading-relaxed max-w-sm">
+            <p className="text-[14px] text-[#CBD5E1] leading-relaxed max-w-sm">
               Centro técnico especializado na reparação, diagnóstico e manutenção de equipamentos eletrónicos, eletrodomésticos, instalações industriais e sistemas informáticos no Golf 2, Luanda.
             </p>
 
-            <div className="pt-2 space-y-2 text-xs text-slate-400">
+            <div className="pt-2 space-y-2.5 text-[14px] text-[#CBD5E1]">
               <div className="flex items-start gap-2.5">
-                <MapPin className="w-4 h-4 text-sky-400 shrink-0 mt-0.5" />
+                <MapPin className="w-4 h-4 text-[#0EA5E9] shrink-0 mt-0.5" />
                 <span>
                   {company.address}, {company.city}, {company.country}
                 </span>
               </div>
               <div className="flex items-center gap-2.5">
-                <Phone className="w-4 h-4 text-sky-400 shrink-0" />
+                <Phone className="w-4 h-4 text-[#0EA5E9] shrink-0" />
                 <a
                   href={`tel:${company.phone}`}
                   onClick={() => track('phone_click', { source: 'footer' })}
@@ -59,7 +59,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
                 </a>
               </div>
               <div className="flex items-center gap-2.5">
-                <Mail className="w-4 h-4 text-sky-400 shrink-0" />
+                <Mail className="w-4 h-4 text-[#0EA5E9] shrink-0" />
                 <a
                   href={`mailto:${company.email}`}
                   onClick={() => track('email_click', { source: 'footer' })}
@@ -68,12 +68,12 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
                   {company.email}
                 </a>
               </div>
-              <div className="flex items-start gap-2.5 text-slate-400">
-                <Clock className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
+              <div className="flex items-start gap-2.5 text-[#CBD5E1]">
+                <Clock className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
                 <div className="space-y-0.5">
                   <div>{settings.businessHours.weekdays}</div>
-                  <div className="text-[11px] text-slate-400">{settings.businessHours.saturday}</div>
-                  <div className="text-[11px] text-slate-500">{settings.businessHours.sunday || 'Domingos e Feriados: Fechado'}</div>
+                  <div className="text-[14px] text-[#94A3B8]">{settings.businessHours.saturday}</div>
+                  <div className="text-[14px] text-[#94A3B8]">{settings.businessHours.sunday || 'Domingos e Feriados: Fechado'}</div>
                 </div>
               </div>
             </div>
@@ -81,7 +81,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
             {/* Redes Sociais Dinâmicas */}
             {activeSocials.length > 0 && (
               <div className="pt-3 space-y-2">
-                <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-400 block">
+                <span className="text-[14px] font-semibold uppercase tracking-wider text-[#94A3B8] block">
                   Redes Oficiais
                 </span>
                 <div className="flex flex-wrap gap-2">
@@ -91,10 +91,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
                       href={item.url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-slate-300 hover:text-white text-xs border border-slate-800 transition-colors inline-flex items-center gap-1.5"
+                      className="px-3 py-1.5 rounded-[10px] bg-[#111B2E] hover:bg-[#1B2A44] text-[#E6EDF7] hover:text-white text-[14px] border border-[#1B2A44] transition-colors inline-flex items-center gap-2"
                       aria-label={item.label}
                     >
-                      <span className="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
+                      <span className="w-2 h-2 rounded-full bg-[#0EA5E9]"></span>
                       <span>{item.name}</span>
                     </a>
                   ))}
@@ -105,17 +105,17 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
 
           {/* Column 2: Categorias de Serviços */}
           <div className="space-y-3">
-            <h4 className="text-white text-sm font-semibold tracking-wider uppercase">
+            <h4 className="text-white text-[15px] font-bold font-heading tracking-wider uppercase">
               Categorias de Serviços
             </h4>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2.5 text-[14px]">
               {CATEGORIES_CONFIG.map((cat) => (
                 <li key={cat.id}>
                   <Link
                     to={`/servicos?categoria=${cat.id}`}
-                    className="hover:text-white transition-colors flex items-center gap-1.5"
+                    className="hover:text-[#0EA5E9] text-[#CBD5E1] transition-colors flex items-center gap-2"
                   >
-                    <span className="text-xs" aria-hidden="true">
+                    <span className="text-base" aria-hidden="true">
                       {cat.icon}
                     </span>
                     <span>{cat.name}</span>
@@ -125,7 +125,7 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
               <li>
                 <Link
                   to="/servicos"
-                  className="text-sky-400 hover:text-sky-300 font-medium inline-block pt-1"
+                  className="text-[#0EA5E9] hover:text-[#38BDF8] font-semibold inline-block pt-1"
                 >
                   Ver todos os serviços &rarr;
                 </Link>
@@ -135,49 +135,49 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
 
           {/* Column 3: Links Institucionais Principais */}
           <div className="space-y-3">
-            <h4 className="text-white text-sm font-semibold tracking-wider uppercase">
+            <h4 className="text-white text-[15px] font-bold font-heading tracking-wider uppercase">
               Navegação
             </h4>
-            <ul className="space-y-2 text-sm">
+            <ul className="space-y-2.5 text-[14px]">
               <li>
-                <Link to="/" className="hover:text-white transition-colors">
+                <Link to="/" className="hover:text-[#0EA5E9] text-[#CBD5E1] transition-colors">
                   Início
                 </Link>
               </li>
               <li>
-                <Link to="/servicos" className="hover:text-white transition-colors">
+                <Link to="/servicos" className="hover:text-[#0EA5E9] text-[#CBD5E1] transition-colors">
                   Serviços Técnicos
                 </Link>
               </li>
               <li>
-                <Link to="/equipamentos" className="hover:text-white transition-colors">
+                <Link to="/equipamentos" className="hover:text-[#0EA5E9] text-[#CBD5E1] transition-colors">
                   Equipamentos
                 </Link>
               </li>
               <li>
-                <Link to="/galeria" className="hover:text-white transition-colors">
+                <Link to="/galeria" className="hover:text-[#0EA5E9] text-[#CBD5E1] transition-colors">
                   Galeria de Intervenções
                 </Link>
               </li>
               <li>
-                <Link to="/sobre" className="hover:text-white transition-colors">
+                <Link to="/sobre" className="hover:text-[#0EA5E9] text-[#CBD5E1] transition-colors">
                   Sobre a Ama Tec
                 </Link>
               </li>
               <li>
-                <Link to="/como-funciona" className="hover:text-white transition-colors">
+                <Link to="/como-funciona" className="hover:text-[#0EA5E9] text-[#CBD5E1] transition-colors">
                   Como Funciona
                 </Link>
               </li>
               <li>
-                <Link to="/contactos" className="hover:text-white transition-colors">
+                <Link to="/contactos" className="hover:text-[#0EA5E9] text-[#CBD5E1] transition-colors">
                   Contactos & Localização
                 </Link>
               </li>
               <li>
                 <Link
                   to="/solicitar-assistencia"
-                  className="hover:text-white text-sky-400 font-medium transition-colors"
+                  className="hover:text-[#38BDF8] text-[#0EA5E9] font-semibold transition-colors"
                 >
                   Solicitar Assistência
                 </Link>
@@ -187,10 +187,10 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
 
           {/* Column 4: Contacto Rápido & Futuro Ama Tec 365 */}
           <div className="space-y-4">
-            <h4 className="text-white text-sm font-semibold tracking-wider uppercase">
+            <h4 className="text-white text-[15px] font-bold font-heading tracking-wider uppercase">
               Atendimento Direto
             </h4>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <p className="text-[14px] text-[#CBD5E1] leading-relaxed">
               Precisa de reparação urgente? Envie os detalhes do seu aparelho pelo WhatsApp para triagem imediata.
             </p>
             <a
@@ -198,16 +198,16 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
               target="_blank"
               rel="noopener noreferrer"
               onClick={() => track('whatsapp_click', { source: 'footer_cta' })}
-              className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold uppercase tracking-wider transition-colors shadow-sm"
+              className="w-full inline-flex items-center justify-center gap-2 min-h-[48px] px-4 py-2.5 rounded-[10px] bg-[#059669] hover:bg-[#10B981] text-white text-[14px] font-semibold uppercase tracking-wider transition-all shadow-sm focus-visible:ring-2 focus-visible:ring-[#10B981] focus-visible:outline-none cursor-pointer"
             >
               <MessageSquare className="w-4 h-4" />
               <span>WhatsApp Técnico</span>
             </a>
 
-            <div className="border border-slate-800 bg-slate-900/60 p-3 rounded-lg text-xs space-y-2">
+            <div className="border border-[#111B2E] bg-[#0B1220] p-4 rounded-[14px] text-[14px] space-y-2.5">
               <div>
-                <span className="text-sky-400 font-semibold block">Ama Tec 365</span>
-                <p className="text-slate-400 text-[11px]">
+                <span className="text-[#0EA5E9] font-bold block">Ama Tec 365</span>
+                <p className="text-[#94A3B8] text-[14px] leading-snug">
                   Plataforma integrada de assistência contínua e planos de manutenção em preparação.
                 </p>
               </div>
@@ -217,9 +217,9 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => track('client_portal_footer_click')}
-                  className="w-full inline-flex items-center justify-center gap-2 px-3 py-1.5 rounded-md bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-medium border border-slate-700 transition-colors"
+                  className="w-full inline-flex items-center justify-center gap-2 min-h-[48px] px-3 py-2 rounded-[10px] bg-[#111B2E] hover:bg-[#1B2A44] text-[#E6EDF7] text-[14px] font-medium border border-[#1B2A44] transition-colors focus-visible:ring-2 focus-visible:ring-[#0EA5E9]"
                 >
-                  <ExternalLink className="w-3.5 h-3.5 text-sky-400" />
+                  <ExternalLink className="w-4 h-4 text-[#0EA5E9]" />
                   <span>Consultar minha assistência</span>
                 </a>
               ) : null}
@@ -229,32 +229,32 @@ export const Footer: React.FC<FooterProps> = ({ onOpenDatabaseManager }) => {
       </div>
 
       {/* Bottom Legal Bar */}
-      <div className="border-t border-slate-900 bg-slate-950/80 py-6 px-4 sm:px-6 lg:px-8 text-xs text-slate-500">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="border-t border-[#111B2E] bg-[#040810] py-6 px-4 sm:px-6 lg:px-8 text-[14px] text-[#94A3B8]">
+        <div className="max-w-[1200px] mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="text-center md:text-left space-y-1">
-            <p className="text-slate-400">
-              © {new Date().getFullYear()} <strong className="text-slate-200">Ama Tec</strong>. Todos os direitos reservados.
+            <p className="text-[#CBD5E1]">
+              © {new Date().getFullYear()} <strong className="text-white">Ama Tec</strong>. Todos os direitos reservados.
             </p>
-            <p className="text-[11px] text-slate-500">
-              Razão Social: <span className="font-medium text-slate-400">{company.legalName}</span> | NIF: <span className="font-medium text-slate-400">{company.nif}</span>
-              <span className="mx-2 text-slate-700">·</span>
-              <Link to="/admin" className="text-slate-700 hover:text-slate-400 transition-colors inline-flex items-center gap-1 text-[11px]" title="Área restrita de gestão">
-                <Lock className="w-2.5 h-2.5" />
+            <p className="text-[14px] text-[#94A3B8]">
+              Razão Social: <span className="font-medium text-[#CBD5E1]">{company.legalName}</span> | NIF: <span className="font-medium text-[#CBD5E1]">{company.nif}</span>
+              <span className="mx-2 text-[#475569]">·</span>
+              <Link to="/admin" className="text-[#94A3B8] hover:text-white transition-colors inline-flex items-center gap-1 text-[14px]" title="Área restrita de gestão">
+                <Lock className="w-3.5 h-3.5" />
                 <span>Gestão</span>
               </Link>
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 text-xs">
-            <Link to="/privacidade" className="hover:text-slate-300 transition-colors">
+          <div className="flex flex-wrap items-center justify-center gap-4 text-[14px]">
+            <Link to="/privacidade" className="hover:text-white transition-colors">
               Política de Privacidade
             </Link>
             <span>·</span>
-            <Link to="/cookies" className="hover:text-slate-300 transition-colors">
+            <Link to="/cookies" className="hover:text-white transition-colors">
               Cookies & Consentimento
             </Link>
             <span>·</span>
-            <Link to="/faq" className="hover:text-slate-300 transition-colors">
+            <Link to="/faq" className="hover:text-white transition-colors">
               FAQ
             </Link>
           </div>

@@ -2,9 +2,21 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Funções auxiliares de autenticação e papéis (RBAC)
+    // Funções auxiliares de autenticação e papéis (RBAC / Custom Claims)
     function isAuthenticated() {
       return request.auth != null;
+    }
+
+    function siteRole() {
+      return request.auth != null ? request.auth.token.get('siteRole', '') : '';
+    }
+
+    function isSiteStaff() {
+      return siteRole() in ['admin', 'gestor'];
+    }
+
+    function isSiteAdmin() {
+      return siteRole() == 'admin';
     }
     
     function isAdminOrManager() {
@@ -26,21 +38,73 @@ service cloud.firestore {
       );
     }
 
+    // =========================================================================
+    // REGRAS DE SITE AMA TEC (Custom User Claims: siteRole == 'admin' | 'gestor')
+    // =========================================================================
+
+    match /site_settings/{id} {
+      allow read: if true;
+      allow write: if isSiteAdmin();
+    }
+
+    match /site_hero/{id} {
+      allow read: if resource.data.published == true || isSiteStaff();
+      allow write: if isSiteStaff();
+    }
+
+    match /site_categories/{id} {
+      allow read: if resource.data.published == true || isSiteStaff();
+      allow write: if isSiteStaff();
+    }
+
+    match /site_services/{id} {
+      allow read: if resource.data.published == true || isSiteStaff();
+      allow create, update: if isSiteStaff()
+        && request.resource.data.title is string
+        && request.resource.data.slug is string
+        && request.resource.data.slug.matches('^[a-z0-9-]+$');
+      allow delete: if isSiteAdmin();
+    }
+
+    match /site_equipment/{id} {
+      allow read: if resource.data.published == true || isSiteStaff();
+      allow write: if isSiteStaff();
+    }
+
+    match /site_gallery/{id} {
+      allow read: if resource.data.published == true || isSiteStaff();
+      allow write: if isSiteStaff();
+    }
+
+    match /site_testimonials/{id} {
+      allow read: if resource.data.approved == true || isSiteStaff();
+      allow write: if isSiteStaff();
+    }
+
+    match /site_audit_log/{id} {
+      allow read: if isSiteAdmin();
+      allow create: if isSiteStaff() && request.resource.data.uid == request.auth.uid;
+      allow update, delete: if false;
+    }
+
+    // =========================================================================
+    // COLEÇÕES PADRÃO DO SISTEMA AMA TEC & ERP BUKULO GESTE
+    // =========================================================================
+
     // 1. Pedidos (bookings) — Coleção oficial de assistência técnica
-    // Clientes públicos NUNCA criam diretamente no Firestore: submissão passa exclusivamente pelo backend (/api/*).
     match /bookings/{bookingId} {
       allow create: if false; // Criado apenas pelo Firebase Admin SDK server-side
       allow read: if isAnyStaff();
       allow update, delete: if isAdminOrManager();
     }
 
-    // 2. Serviços — Leitura pública só de serviços publicados; escrita restrita a admins
+    // 2. Serviços legado / unificado
     match /services/{serviceId} {
       allow read: if resource == null || resource.data.status == 'published' || isAdminOrManager();
       allow write: if isAdminOrManager();
     }
 
-    // 3. Categorias, Equipamentos e Galeria de Trabalhos
+    // 3. Categorias, Equipamentos e Galeria legado / unificado
     match /categories/{categoryId} {
       allow read: if true;
       allow write: if isAdminOrManager();
@@ -56,13 +120,13 @@ service cloud.firestore {
       allow write: if isAdminOrManager();
     }
 
-    // 4. Depoimentos — Leitura pública apenas para depoimentos aprovados (>=3 para renderizar na UI)
+    // 4. Depoimentos legado / unificado
     match /testimonials/{testimonialId} {
       allow read: if resource == null || resource.data.approved == true || isAdminOrManager();
       allow write: if isAdminOrManager();
     }
 
-    // 5. Definições Globais e Conteúdo Institucional da Home (Hero, contactos, horários)
+    // 5. Definições Globais e Conteúdo Institucional
     match /settings/{settingId} {
       allow read: if true;
       allow write: if isAdminOrManager();
@@ -83,7 +147,7 @@ service cloud.firestore {
     match /audit_logs/{logId} {
       allow read: if isAdminOrManager();
       allow create: if isAnyStaff();
-      allow update, delete: if false; // Imutabilidade de registo
+      allow update, delete: if false;
     }
 
     // 8. Coleções de Infraestrutura e Segurança Server-Side (Protegidas)

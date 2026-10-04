@@ -152,6 +152,29 @@ export default async function adminApiHandler(
     });
   }
 
+  // 3.1 ENDPOINTS DE DIAGNÓSTICO E CONFIGURAÇÃO FIREBASE (/api/admin/firebase-config e /api/admin/diagnostic)
+  if (pathname === '/api/admin/firebase-config' && method === 'GET') {
+    return sendJson(res, 200, {
+      projectId: process.env.FIREBASE_PROJECT_ID || '5e6776003cafad3b31f1ef1cadf6b32b39dcda69',
+    });
+  }
+
+  if (pathname === '/api/admin/diagnostic' && method === 'GET') {
+    const session = getSessionFromRequest(req);
+    const projectId = process.env.FIREBASE_PROJECT_ID || '5e6776003cafad3b31f1ef1cadf6b32b39dcda69';
+    return sendJson(res, 200, {
+      projectId,
+      sessionUser: session
+        ? {
+            id: session.userId,
+            email: session.email,
+            role: session.role,
+            siteRole: session.role === 'admin' ? 'admin' : (session.role as string) === 'gestor' ? 'gestor' : '',
+          }
+        : null,
+    });
+  }
+
   // --- A PARTIR DAQUI TODAS AS ROTAS REQUEREM SESSÃO VÁLIDA ---
   const session = getSessionFromRequest(req);
   if (!session) {

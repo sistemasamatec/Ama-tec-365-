@@ -216,7 +216,10 @@ export async function processLeadSubmission(payload: LeadPayload, clientIp: stri
 
   if (resendApiKey && !resendApiKey.startsWith('re_sample')) {
     try {
-      const resendRes = await fetch('https://api.resend.com/emails', {
+      let dispatchOk = false;
+      let lastErrText = '';
+
+      const primaryRes = await fetch('https://api.resend.com/emails', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -230,17 +233,80 @@ export async function processLeadSubmission(payload: LeadPayload, clientIp: stri
           html: htmlBody,
         }),
       });
-      if (resendRes.ok) {
+
+      if (primaryRes.ok) {
+        dispatchOk = true;
+      } else {
+        lastErrText = await primaryRes.text();
+        // Se falhou por domínio não verificado ou restrição de conta de testes, tenta envio sandbox
+        if (primaryRes.status === 403 || lastErrText.includes('domain is not verified') || lastErrText.includes('testing emails')) {
+          const sandboxFrom = 'Ama Tec <onboarding@resend.dev>';
+          let fallbackTo = targetEmail;
+
+          // Se a conta de testes do Resend exigir envio para o próprio proprietário
+          const ownerMatch = lastErrText.match(/to your own email address \(([^)]+)\)/);
+          if (ownerMatch && ownerMatch[1]) {
+            fallbackTo = ownerMatch[1];
+          }
+
+          const fallbackRes = await fetch('https://api.resend.com/emails', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${resendApiKey}`,
+            },
+            body: JSON.stringify({
+              from: sandboxFrom,
+              to: [fallbackTo],
+              reply_to: email || undefined,
+              subject,
+              html: htmlBody,
+            }),
+          });
+
+          if (fallbackRes.ok) {
+            dispatchOk = true;
+            console.log(`[Ama Tec Resend] Notificação enviada via sandbox (${sandboxFrom} -> ${fallbackTo}).`);
+          } else {
+            const fbErr = await fallbackRes.text();
+            const ownerMatchFb = fbErr.match(/to your own email address \(([^)]+)\)/);
+            if (ownerMatchFb && ownerMatchFb[1] && fallbackTo !== ownerMatchFb[1]) {
+              const ownerRes = await fetch('https://api.resend.com/emails', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${resendApiKey}`,
+                },
+                body: JSON.stringify({
+                  from: sandboxFrom,
+                  to: [ownerMatchFb[1]],
+                  reply_to: email || undefined,
+                  subject,
+                  html: htmlBody,
+                }),
+              });
+              if (ownerRes.ok) {
+                dispatchOk = true;
+                console.log(`[Ama Tec Resend] Notificação enviada para o administrador (${ownerMatchFb[1]}).`);
+              } else {
+                console.warn('[Ama Tec Resend] Notificação via email em espera (domínio pendente de validação em resend.com/domains).');
+              }
+            } else {
+              console.warn('[Ama Tec Resend] Notificação via email em espera (domínio pendente de validação em resend.com/domains).');
+            }
+          }
+        } else {
+          console.warn('[Ama Tec Resend] Aviso ao enviar notificação por email:', lastErrText);
+        }
+      }
+
+      if (dispatchOk) {
         emailDispatched = true;
-        // Atualiza status do envio no servidor
         serverLeadRecord.emailDispatched = true;
         saveLeadToServer(serverLeadRecord);
-      } else {
-        const resendErr = await resendRes.text();
-        console.error('[Ama Tec] Erro ao enviar por Resend:', resendErr);
       }
-    } catch (sendErr) {
-      console.error('[Ama Tec] Falha de rede ao conectar com Resend:', sendErr);
+    } catch (sendErr: any) {
+      console.warn('[Ama Tec] Aviso de rede ao conectar com Resend:', sendErr?.message || sendErr);
     }
   } else {
     // Modo desenvolvimento / sem chaves: registo limpo em consola

@@ -31,7 +31,8 @@ interface StoreRecord<T = any> {
 // Global cached connection pool across serverless hot lambda invocations
 declare global {
   var _amatecFirebaseApp: FirebaseAdminApp | undefined;
-  var _amatecFirestoreDb: FirestoreDb | undefined;
+  var _amatecFirestoreDb: FirestoreDb | null | undefined;
+  var _amatecFirestoreDisabled: boolean | undefined;
   var _amatecPgPool: Pool | undefined;
   var _amatecTursoClient: TursoClient | undefined;
   var _amatecDbInitialized: boolean | undefined;
@@ -49,9 +50,19 @@ export function normalizeCollectionName(collectionName: string): string {
   return collectionName;
 }
 
+export function normalizePrivateKey(key?: string): string {
+  if (!key) return '';
+  return key
+    .replace(/\\n/g, '\n')
+    .replace('-----END CHAVE PRIVADA-----', '-----END PRIVATE KEY-----')
+    .replace('-----FIM DA CHAVE PRIVADA-----', '-----END PRIVATE KEY-----')
+    .replace('-----INICIO DA CHAVE PRIVADA-----', '-----BEGIN PRIVATE KEY-----')
+    .trim();
+}
+
 function isValidPrivateKey(key?: string): boolean {
   if (!key) return false;
-  const formatted = key.replace(/\\n/g, '\n');
+  const formatted = normalizePrivateKey(key);
   return (
     formatted.includes('-----BEGIN PRIVATE KEY-----') &&
     formatted.includes('-----END PRIVATE KEY-----') &&
@@ -59,16 +70,32 @@ function isValidPrivateKey(key?: string): boolean {
   );
 }
 
+function isValidClientEmail(email?: string): boolean {
+  if (!email) return false;
+  const clean = email.trim();
+  return clean.includes('@') && clean.includes('.') && clean.length > 5;
+}
+
+export function disableFirestoreOnAuthError(err: any): void {
+  if (!err) return;
+  const code = err.code || err.status;
+  const msg = String(err.message || err.details || err);
+  if (code === 7 || code === 16 || msg.includes('PERMISSION_DENIED') || msg.includes('UNAUTHENTICATED')) {
+    global._amatecFirestoreDisabled = true;
+    global._amatecFirestoreDb = null;
+  }
+}
+
 export function getDatabaseEngineType(): DatabaseEngineType {
   if (process.env.FORCE_FIRESTORE === 'true') {
     return 'firestore';
   }
 
-  // 1. Firebase Firestore (Prioridade de Produção)
+  // 1. Firebase Firestore (Prioridade de Produção com credenciais completas)
   if (process.env.FIREBASE_PROJECT_ID) {
     if (
       process.env.GOOGLE_APPLICATION_CREDENTIALS ||
-      (process.env.FIREBASE_CLIENT_EMAIL && isValidPrivateKey(process.env.FIREBASE_PRIVATE_KEY))
+      (isValidClientEmail(process.env.FIREBASE_CLIENT_EMAIL) && isValidPrivateKey(process.env.FIREBASE_PRIVATE_KEY))
     ) {
       return 'firestore';
     }
@@ -93,11 +120,20 @@ export function getDatabaseEngineType(): DatabaseEngineType {
  * Obtém ou inicializa a instância do Firestore via Firebase Admin SDK
  */
 export function getFirestoreDb(): FirestoreDb | null {
-  const projectId = process.env.FIREBASE_PROJECT_ID;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  let privateKey = process.env.FIREBASE_PRIVATE_KEY;
+  if (global._amatecFirestoreDisabled) {
+    return null;
+  }
+
+  const projectId = process.env.FIREBASE_PROJECT_ID?.trim();
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
+  const rawKey = process.env.FIREBASE_PRIVATE_KEY;
 
   if (!projectId) return null;
+
+  // Se o tipo de motor selecionado não for firestore, não tenta ligar ao Firestore
+  if (getDatabaseEngineType() !== 'firestore') {
+    return null;
+  }
 
   if (global._amatecFirestoreDb) {
     return global._amatecFirestoreDb;
@@ -106,20 +142,20 @@ export function getFirestoreDb(): FirestoreDb | null {
   try {
     const existingApps = getApps();
     if (!existingApps.length) {
-      if (clientEmail && privateKey && isValidPrivateKey(privateKey)) {
-        if (privateKey.includes('\\n')) {
-          privateKey = privateKey.replace(/\\n/g, '\n');
-        }
+      if (isValidClientEmail(clientEmail) && isValidPrivateKey(rawKey)) {
+        const privateKey = normalizePrivateKey(rawKey);
         global._amatecFirebaseApp = initializeApp({
           credential: cert({
             projectId,
-            clientEmail,
+            clientEmail: clientEmail!,
             privateKey,
           }),
         });
-      } else {
-        // Inicialização padrão por ADC (Application Default Credentials no Google Cloud / Cloud Run)
+      } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
         global._amatecFirebaseApp = initializeApp({ projectId });
+      } else {
+        global._amatecFirestoreDisabled = true;
+        return null;
       }
     } else {
       global._amatecFirebaseApp = existingApps[0];
@@ -130,8 +166,9 @@ export function getFirestoreDb(): FirestoreDb | null {
     db.settings({ ignoreUndefinedProperties: true });
     global._amatecFirestoreDb = db;
     return global._amatecFirestoreDb ?? null;
-  } catch (err) {
-    console.error('[Ama Tec DB] Erro ao inicializar Firebase Admin Firestore:', err);
+  } catch (err: any) {
+    global._amatecFirestoreDisabled = true;
+    console.warn('[Ama Tec DB] Firestore indisponível com as credenciais atuais:', err?.message || err);
     return null;
   }
 }

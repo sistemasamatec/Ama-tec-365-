@@ -322,29 +322,47 @@ export function getAuditLogsFromDb(limit: number = 100): AuditLogEntry[] {
 }
 
 /* =========================================================================
-   GESTÃO DE UTILIZADORES E AUTENTICAÇÃO
+   GESTÃO DE UTILIZADORES E AUTENTICAÇÃO (BOOTSTRAP SEGURO VIA ENV)
 ========================================================================= */
 
-const DEFAULT_ADMIN_PASSWORD_INITIAL = 'AmaTec#2026!Golf2';
-
-export function initDefaultAdminUser(): AdminUser {
+export function initDefaultAdminUser(): AdminUser | null {
   const users = safeReadJson<AdminUser[]>(USERS_FILE, []);
-  const existing = users.find(
-    (u) =>
-      u.email.toLowerCase() === 'josuefranciscojaime@gmail.com' ||
-      u.email.toLowerCase() === 'admin@amatec.ao'
-  );
+  const bootstrapEmail = (process.env.AMATEC_ADMIN_BOOTSTRAP_EMAIL || '').trim().toLowerCase();
+  const bootstrapPassword = process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD || '';
 
-  if (existing) {
-    return existing;
+  // Se o utilizador já existir pelo email de bootstrap configurado
+  if (bootstrapEmail) {
+    const existing = users.find((u) => u.email.toLowerCase() === bootstrapEmail);
+    if (existing) {
+      return existing;
+    }
   }
 
-  // Cria utilizador administrador inicial (Josué)
-  const { salt, hash } = hashPassword(DEFAULT_ADMIN_PASSWORD_INITIAL);
+  // 1. Sem credenciais de bootstrap: NÃO criar administrador automaticamente
+  if (!bootstrapEmail && !bootstrapPassword) {
+    const existingAdmin = users.find((u) => u.role === 'admin');
+    return existingAdmin || null;
+  }
+
+  // 2. Se apenas uma das variáveis estiver definida: falha segura no servidor
+  if (!bootstrapEmail || !bootstrapPassword) {
+    const missing = !bootstrapEmail ? 'AMATEC_ADMIN_BOOTSTRAP_EMAIL' : 'AMATEC_ADMIN_BOOTSTRAP_PASSWORD';
+    console.error(`[Ama Tec Security] Erro de configuração: variável ${missing} não está definida.`);
+    throw new Error(`Configuração de bootstrap incompleta: ${missing} é obrigatória quando credenciais são fornecidas.`);
+  }
+
+  // 3. Validação rigorosa de tamanho de palavra-passe (mínimo de 16 caracteres)
+  if (bootstrapPassword.length < 16) {
+    console.error('[Ama Tec Security] A password de bootstrap administrativo deve ter no mínimo 16 caracteres.');
+    throw new Error('A password de bootstrap administrativo deve ter no mínimo 16 caracteres.');
+  }
+
+  // 4. Criação inicial do administrador através do bootstrap seguro
+  const { salt, hash } = hashPassword(bootstrapPassword);
   const adminUser: AdminUser = {
-    id: 'user-admin-josue',
-    email: 'josuefranciscojaime@gmail.com',
-    name: 'Josué Jaime (Administrador)',
+    id: `admin-${Date.now()}`,
+    email: bootstrapEmail,
+    name: bootstrapEmail.split('@')[0] || 'Administrador',
     role: 'admin',
     passwordSalt: salt,
     passwordHash: hash,
@@ -353,7 +371,7 @@ export function initDefaultAdminUser(): AdminUser {
 
   users.push(adminUser);
   safeWriteJson(USERS_FILE, users);
-  logAudit('USER_INIT', 'adminUser', 'sistema', '127.0.0.1', {
+  logAudit('USER_BOOTSTRAP', adminUser.email, 'sistema', '127.0.0.1', {
     email: adminUser.email,
     role: adminUser.role,
   });
@@ -422,7 +440,11 @@ export function authenticateAdmin(
   clientIp: string = '127.0.0.1',
   userAgent?: string
 ): { success: boolean; user?: AdminUser; session?: AdminSession; error?: string } {
-  initDefaultAdminUser();
+  try {
+    initDefaultAdminUser();
+  } catch (err: any) {
+    console.error('[Ama Tec Security] Erro na verificação de bootstrap:', err.message);
+  }
 
   const cleanEmail = (emailInput || '').trim().toLowerCase();
   if (!cleanEmail || !passwordInput) {
@@ -446,13 +468,9 @@ export function authenticateAdmin(
     };
   }
 
-  // 2. Consulta de utilizador
+  // 2. Consulta de utilizador exclusivamente pelo email fornecido
   const users = safeReadJson<AdminUser[]>(USERS_FILE, []);
-  const user = users.find(
-    (u) =>
-      u.email.toLowerCase() === cleanEmail ||
-      (cleanEmail === 'admin@amatec.ao' && u.role === 'admin')
-  );
+  const user = users.find((u) => u.email.toLowerCase() === cleanEmail);
 
   if (!user) {
     recordFailedLogin(clientIp);
@@ -549,6 +567,11 @@ export function changeAdminPassword(
   user.passwordSalt = salt;
   user.passwordHash = hash;
   safeWriteJson(USERS_FILE, users);
+
+  // Invalidação de todas as sessões existentes deste utilizador para obrigar novo login
+  const sessions = safeReadJson<AdminSession[]>(SESSIONS_FILE, []);
+  const remainingSessions = sessions.filter((s) => s.userId !== userId);
+  safeWriteJson(SESSIONS_FILE, remainingSessions);
 
   logAudit('PASSWORD_CHANGED', user.email, userEmail, ip);
   return { success: true };

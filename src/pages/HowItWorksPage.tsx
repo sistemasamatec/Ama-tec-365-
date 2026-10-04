@@ -128,7 +128,7 @@ export const HowItWorksPage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-16">
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 space-y-16">
       {/* Schema.org FAQPage structured data */}
       {faqSchema && (
         <script
@@ -139,13 +139,13 @@ export const HowItWorksPage: React.FC = () => {
 
       {/* Header */}
       <div className="max-w-3xl space-y-3">
-        <div className="text-xs font-semibold text-sky-600 uppercase tracking-wider">
+        <div className="text-[14px] font-semibold text-[#0284C7] uppercase tracking-wider">
           Método de Atendimento
         </div>
-        <h1 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
+        <h1 className="text-h1 font-heading font-extrabold text-[#060B16] tracking-tight">
           Como Funciona a Assistência Técnica
         </h1>
-        <p className="text-sm sm:text-base text-slate-600 leading-relaxed">
+        <p className="text-[16px] text-[#475569] leading-relaxed">
           Sem surpresas, sem custos ocultos. Conheça as 5 fases rigorosas que garantem a segurança do seu equipamento desde o diagnóstico até à entrega na Ama Tec.
         </p>
       </div>
@@ -157,35 +157,35 @@ export const HowItWorksPage: React.FC = () => {
           return (
             <div
               key={idx}
-              className="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-xs hover:border-sky-300 transition-colors"
+              className="card-base bg-white p-6 sm:p-8 shadow-xs hover:border-[#0EA5E9] transition-colors"
             >
               <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
                 <div className="md:col-span-1 flex items-center md:flex-col gap-2">
-                  <span className="text-3xl sm:text-4xl font-black font-mono text-sky-600">
+                  <span className="text-3xl sm:text-4xl font-black font-heading text-[#0284C7]">
                     {step.num}
                   </span>
                 </div>
 
                 <div className="md:col-span-6 space-y-3">
                   <div className="flex items-center gap-2.5">
-                    <div className="p-2 rounded-lg bg-sky-50 text-sky-600">
+                    <div className="p-2 rounded-[10px] bg-sky-50 text-[#0284C7]">
                       <Icon className="w-5 h-5" />
                     </div>
-                    <h2 className="text-xl font-bold text-slate-900">{step.title}</h2>
+                    <h2 className="text-xl font-bold font-heading text-[#060B16]">{step.title}</h2>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+                  <p className="text-[14px] text-[#475569] leading-relaxed">
                     {step.desc}
                   </p>
                 </div>
 
-                <div className="md:col-span-5 bg-slate-50 p-4 rounded-xl border border-slate-100">
-                  <span className="text-[11px] font-semibold text-slate-700 uppercase tracking-wider block mb-2">
+                <div className="md:col-span-5 bg-[#F4F7FA] p-4 rounded-[10px] border border-[#E2E8F0]">
+                  <span className="text-[14px] font-semibold text-[#0F172A] uppercase tracking-wider block mb-2">
                     Garantias desta fase:
                   </span>
-                  <ul className="space-y-1.5 text-xs text-slate-600">
+                  <ul className="space-y-1.5 text-[14px] text-[#475569]">
                     {step.details.map((item, i) => (
                       <li key={i} className="flex items-center gap-2">
-                        <span className="text-sky-500 font-bold">✓</span>
+                        <span className="text-[#059669] font-bold">✓</span>
                         <span>{item}</span>
                       </li>
                     ))}
@@ -198,16 +198,16 @@ export const HowItWorksPage: React.FC = () => {
       </div>
 
       {/* FAQ SECTION (ACCORDION INTERFACE) */}
-      <section className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-10 lg:p-12 space-y-8">
+      <section className="bg-[#F4F7FA] border border-[#E2E8F0] rounded-[14px] p-6 sm:p-10 lg:p-12 space-y-8">
         <div className="max-w-3xl space-y-2">
-          <div className="flex items-center gap-2 text-xs font-semibold text-sky-600 uppercase tracking-wider">
-            <HelpCircle className="w-4 h-4 text-sky-600" />
+          <div className="flex items-center gap-2 text-[14px] font-semibold text-[#0284C7] uppercase tracking-wider">
+            <HelpCircle className="w-4 h-4 text-[#0284C7]" />
             <span>Perguntas Frequentes</span>
           </div>
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h2 className="text-h2 font-heading font-extrabold text-[#060B16] tracking-tight">
             Dúvidas sobre Diagnóstico & Garantias
           </h2>
-          <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+          <p className="text-[14px] text-[#475569] leading-relaxed">
             Respostas transparentes sobre prazos de análise, critérios de garantia técnica e condições de orçamento na Ama Tec.
           </p>
         </div>
@@ -221,7 +221,7 @@ export const HowItWorksPage: React.FC = () => {
             return (
               <div
                 key={index}
-                className="bg-white rounded-2xl border border-slate-200/90 overflow-hidden shadow-2xs transition-all hover:border-slate-300"
+                className="bg-white rounded-[10px] border border-[#E2E8F0] overflow-hidden shadow-2xs transition-all hover:border-slate-300"
               >
                 <button
                   type="button"
@@ -229,17 +229,17 @@ export const HowItWorksPage: React.FC = () => {
                   aria-expanded={isOpen}
                   aria-controls={contentId}
                   onClick={() => toggleFaq(index)}
-                  className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 font-semibold text-sm sm:text-base text-slate-900 hover:text-sky-600 transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500"
+                  className="w-full text-left p-5 sm:p-6 flex items-center justify-between gap-4 font-semibold text-[15px] sm:text-base text-[#060B16] hover:text-[#0284C7] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#0EA5E9]"
                 >
                   <span className="flex items-center gap-3">
-                    <span className="text-xs font-mono font-bold text-sky-600 shrink-0">
+                    <span className="text-[14px] font-mono font-bold text-[#0284C7] shrink-0">
                       0{index + 1}
                     </span>
                     <span className="leading-snug">{faq.question}</span>
                   </span>
                   <div
-                    className={`p-1.5 rounded-full bg-slate-100 text-slate-500 transition-transform duration-200 shrink-0 ${
-                      isOpen ? 'rotate-180 bg-sky-50 text-sky-600' : ''
+                    className={`p-1.5 rounded-full bg-slate-100 text-[#475569] transition-transform duration-200 shrink-0 ${
+                      isOpen ? 'rotate-180 bg-sky-50 text-[#0284C7]' : ''
                     }`}
                   >
                     <ChevronDown className="w-4 h-4" />
@@ -258,7 +258,7 @@ export const HowItWorksPage: React.FC = () => {
                       transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
                       className="overflow-hidden"
                     >
-                      <div className="px-5 pb-6 pt-1 sm:px-6 sm:pb-6 text-xs sm:text-sm text-slate-600 leading-relaxed border-t border-slate-100 pl-11">
+                      <div className="px-5 pb-6 pt-1 sm:px-6 sm:pb-6 text-[14px] text-[#475569] leading-relaxed border-t border-[#E2E8F0] pl-11">
                         {faq.answer}
                       </div>
                     </motion.div>
@@ -271,17 +271,17 @@ export const HowItWorksPage: React.FC = () => {
       </section>
 
       {/* Conversion Banner */}
-      <div className="bg-slate-900 text-white rounded-2xl p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
+      <div className="bg-[#0B1220] border border-[#111B2E] text-white rounded-[14px] p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
         <div className="space-y-2 max-w-xl text-center md:text-left">
-          <h3 className="text-2xl font-bold">Pronto para agendar o diagnóstico do seu aparelho?</h3>
-          <p className="text-xs sm:text-sm text-slate-300">
+          <h3 className="text-2xl font-bold font-heading text-white">Pronto para agendar o diagnóstico do seu aparelho?</h3>
+          <p className="text-[14px] text-[#E6EDF7]">
             Preencha o formulário online ou envie mensagem pelo WhatsApp para início imediato.
           </p>
         </div>
         <div className="flex flex-col sm:flex-row items-center gap-3 shrink-0">
           <Link
             to="/solicitar-assistencia"
-            className="px-6 py-3 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-semibold text-sm transition-colors"
+            className="btn-primary min-h-[48px] px-6 text-[14px] inline-flex items-center justify-center"
           >
             Solicitar Assistência Online
           </Link>
@@ -289,7 +289,7 @@ export const HowItWorksPage: React.FC = () => {
             href={getGeneralWhatsAppUrl()}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-5 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition-colors flex items-center gap-2"
+            className="btn-whatsapp min-h-[48px] px-5 text-[14px]"
           >
             <MessageSquare className="w-4 h-4" />
             <span>Falar no WhatsApp</span>

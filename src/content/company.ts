@@ -10,7 +10,7 @@ export const COMPANY: CompanyNAP = {
   legalName: 'AMA TEC PRESTAÇÃO DE SERVIÇOS & COMÉRCIO GERAL (SU)',
   descriptor: 'Assistência Técnica de Equipamentos Eletrónicos',
   nif: '5001399837',
-  address: 'Golf 2, Rua dos Príncipes',
+  address: 'Golf II, Rua dos Príncipes, Avenida Pedro de Castro Van-Dúnem Loy, Kilamba-Kiaxi',
   city: 'Luanda',
   country: 'Angola',
   phone: '+244930372597',

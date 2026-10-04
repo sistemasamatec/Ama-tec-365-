@@ -1,6 +1,13 @@
 import assert from 'assert';
 import http from 'http';
+import crypto from 'crypto';
 import apiDispatcher from '../api/index';
+
+// Configura credenciais de teste para bootstrap de administrador se não existirem
+const testAdminEmail = process.env.AMATEC_ADMIN_BOOTSTRAP_EMAIL || 'admin-api-test@amatec.ao';
+const testAdminPassword = process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD || crypto.randomBytes(24).toString('hex');
+process.env.AMATEC_ADMIN_BOOTSTRAP_EMAIL = testAdminEmail;
+process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD = testAdminPassword;
 
 console.log('🧪 Iniciando Testes de Integração e Ciclo de Vida da API do Painel Admin...');
 
@@ -72,16 +79,16 @@ async function runApiTests() {
   // 2. Teste de Login Inválido
   console.log('2. Testando tentativa de login com credenciais incorretas...');
   const wrongLogin = await request('POST', '/api/admin/login', {
-    email: 'josuefranciscojaime@gmail.com',
+    email: testAdminEmail,
     password: 'PalavraPasseCompletamenteErrada',
   });
   assert.strictEqual(wrongLogin.status, 401, 'Login errado deve retornar 401');
 
   // 3. Teste de Login Válido e Cookie httpOnly
-  console.log('3. Testando login oficial do administrador (Josué) e geração de cookie...');
+  console.log('3. Testando login do administrador e geração de cookie...');
   const validLogin = await request('POST', '/api/admin/login', {
-    email: 'josuefranciscojaime@gmail.com',
-    password: 'AmaTec#2026!Golf2',
+    email: testAdminEmail,
+    password: testAdminPassword,
   });
   assert.strictEqual(validLogin.status, 200, 'Login correto deve retornar 200');
   assert.ok(validLogin.data.success, 'Resposta de login deve indicar sucesso');
@@ -100,7 +107,7 @@ async function runApiTests() {
   const authMe = await request('GET', '/api/admin/me', null, sessionCookie);
   assert.strictEqual(authMe.status, 200);
   assert.strictEqual(authMe.data.authenticated, true);
-  assert.strictEqual(authMe.data.user.email, 'josuefranciscojaime@gmail.com');
+  assert.strictEqual(authMe.data.user.email, testAdminEmail);
   assert.strictEqual(authMe.data.user.role, 'admin');
 
   // 5. Teste de CRUD de Serviços via API
