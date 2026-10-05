@@ -1,6 +1,6 @@
-import fs from 'fs';
-import path from 'path';
-import crypto from 'crypto';
+import fs from 'fs.js';
+import path from 'path.js';
+import crypto from 'crypto.js';
 import { SERVICES } from '../content/services';
 import { EQUIPMENT_CATALOG } from '../content/equipment';
 import { COMPANY, SOCIAL_LINKS } from '../content/company';
