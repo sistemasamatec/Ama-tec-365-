@@ -141,7 +141,7 @@ import {
   dbGetCollection,
   dbSaveBackup,
   dbGetBackup,
-} from './serverless-db';
+} from './serverless-db.js';
 
 /* =========================================================================
    DIRETÓRIOS E FICHEIROS PERSISTENTES (COM SUPORTE A SERVERLESS READ-ONLY FS)
