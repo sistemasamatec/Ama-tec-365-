@@ -5,7 +5,7 @@ import {
   updateLeadStatusOnServer,
   deleteLeadFromServer,
   ServerLead,
-} from '../src/lib/server-storage';
+} from '../src/lib/server-storage.js';
 
 // Helper de sanitização de HTML para prevenir injeção em clientes de email
 export function sanitizeHtml(str: string = ''): string {
