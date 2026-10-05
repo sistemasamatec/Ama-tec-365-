@@ -24,8 +24,8 @@
 
 import type { IncomingMessage, ServerResponse } from 'http';
 import 'dotenv/config';
-import { getFirestoreDb, disableFirestoreOnAuthError } from '../src/lib/serverless-db';
-import { getErpFirebaseConfig, getErpFirestoreDb } from '../src/lib/erp-firebase';
+import { getFirestoreDb, disableFirestoreOnAuthError } from '../src/lib/serverless-db.js';
+import { getErpFirebaseConfig, getErpFirestoreDb } from '../src/lib/erp-firebase.js';  
 
 // ============================================================================
 // GESTÃO DE IDEMPOTÊNCIA & RATE LIMITING NO FIRESTORE DO SITE (NÃO NO ERP)
