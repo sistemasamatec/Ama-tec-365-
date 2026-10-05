@@ -5,7 +5,7 @@ import {
   getSettingsFromDb,
   getAllTestimonialsFromDb,
   getAllEquipmentFromDb,
-} from '../src/lib/server-storage';
+} from '../src/lib/server-storage.js';
 
 function sendJson(res: ServerResponse, statusCode: number, data: any) {
   res.statusCode = statusCode;
