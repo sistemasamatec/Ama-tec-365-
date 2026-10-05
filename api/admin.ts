@@ -32,10 +32,10 @@ import {
   saveAdminUserToDb,
   deleteAdminUserFromDb,
   AdminSession,
-} from '../src/lib/server-storage';
-import { getVercelDeployStatus, triggerVercelRebuild } from '../src/lib/vercel-deploy';
-import { getDatabaseEngineType } from '../src/lib/serverless-db';
-import { getErpFirestoreDb } from '../src/lib/erp-firebase';
+} from '../src/lib/server-storage.js';
+import { getVercelDeployStatus, triggerVercelRebuild } from '../src/lib/vercel-deploy.js';
+import { getDatabaseEngineType } from '../src/lib/serverless-db.js';
+import { getErpFirestoreDb } from '../src/lib/erp-firebase.js';
 
 /* Helper para envio de respostas JSON padronizadas */
 function sendJson(res: ServerResponse, statusCode: number, data: any) {
