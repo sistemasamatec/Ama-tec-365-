@@ -1,5 +1,5 @@
 import { createClient } from '@libsql/client';
-import { getFirestoreDb } from '../src/lib/serverless-db';
+import { getFirestoreDb } from '../src/lib/serverless-db.js';
 
 export default async function handler(req: any, res: any) {
   const send = (code: number, body: any) => {
