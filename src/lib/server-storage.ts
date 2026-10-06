@@ -504,12 +504,10 @@ export function authenticateAdmin(
   user.lastLoginAt = new Date().toISOString();
   safeWriteJson(USERS_FILE, users);
 
-  const token = crypto.randomBytes(32).toString('hex');
-  const now = new Date();
+    const now = new Date();
   const expiresAt = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString(); // 7 dias
 
-  const session: AdminSession = {
-    token,
+  const base: Omit<AdminSession, 'token'> = {
     userId: user.id,
     email: user.email,
     name: user.name,
@@ -519,16 +517,12 @@ export function authenticateAdmin(
     ip: clientIp,
     userAgent,
   };
-
-  const sessions = safeReadJson<AdminSession[]>(SESSIONS_FILE, []);
-  sessions.push(session);
-  safeWriteJson(SESSIONS_FILE, sessions);
+  const session: AdminSession = { token: signSession(base), ...base };
 
   logAudit('LOGIN_SUCCESS', user.email, user.email, clientIp, { role: user.role });
 
   return { success: true, user, session };
-}
-
+   
 export function validateSessionToken(token?: string): AdminSession | null {
   if (!token) return null;
   const sessions = safeReadJson<AdminSession[]>(SESSIONS_FILE, []);
