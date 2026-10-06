@@ -434,6 +434,15 @@ export function recordSuccessfulLogin(identifier: string): void {
   safeWriteJson(LOGIN_ATTEMPTS_FILE, filtered);
 }
 
+function sessionSecret(): string {
+  return process.env.AMATEC_SESSION_SECRET || process.env.AMATEC_ADMIN_BOOTSTRAP_PASSWORD || '';
+}
+
+function signSession(data: Omit<AdminSession, 'token'>): string {
+  const payload = Buffer.from(JSON.stringify(data)).toString('base64url');
+  const sig = crypto.createHmac('sha256', sessionSecret()).update(payload).digest('base64url');
+  return `${payload}.${sig}`;
+}
 export function authenticateAdmin(
   emailInput: string,
   passwordInput: string,
